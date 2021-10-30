@@ -1,7 +1,13 @@
+#include "gpio_error.h"
 #include <pigpio.h>
 
 int main()
 {
-	gpioInitialise();
+	i32 result = gpioInitialise();
+	if (result < 0)
+	{
+		throw gpio_error{result};
+	}
+
 	gpioTerminate();
 }
