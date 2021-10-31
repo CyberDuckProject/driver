@@ -15,6 +15,14 @@ public:
 void init();
 void shutdown();
 
+enum class motor
+{
+	left,
+	right
+};
+
+void set_speed(motor motor, f32 speed);
+
 } // namespace gpio
 
 #endif
