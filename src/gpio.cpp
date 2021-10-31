@@ -314,7 +314,17 @@ public:
 
 } // namespace
 
-gpio_error::gpio_error(i32 error_code)
+#define PIGPIO_CALL(call)                                                      \
+	do                                                                         \
+	{                                                                          \
+		if (const i32 code{call}; code < 0)                                    \
+		{                                                                      \
+			throw gpio_error{code};                                            \
+		}                                                                      \
+	}                                                                          \
+	while (false)
+
+gpio_error::gpio_error(const i32 error_code)
     : std::system_error{std::error_code{error_code, category}}
 {
 }
@@ -322,13 +332,10 @@ gpio_error::gpio_error(i32 error_code)
 void init()
 {
 	// Disable printing
-	u32 internals{gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER};
+	const u32 internals{gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER};
 	gpioCfgSetInternals(internals);
 
-	if (i32 code = gpioInitialise(); code < 0)
-	{
-		throw gpio_error{code};
-	}
+	PIGPIO_CALL(gpioInitialise());
 
 	set_speed(motor::left, 0.0f);
 	set_speed(motor::right, 0.0f);
@@ -339,20 +346,17 @@ void shutdown()
 	gpioTerminate();
 }
 
-void set_speed(motor motor, f32 speed)
+void set_speed(const motor motor, const f32 speed)
 {
 	assert(speed >= 0.0f && speed <= 1.0f);
-	u32 us = 1000 + static_cast<u32>(speed * 1000.0f);
+	const u32 us{1000 + static_cast<u32>(speed * 1000.0f)};
 
 	// TODO: get actual pin numbers
 	constexpr u32 left_pin = 0xC0FFEE;
 	constexpr u32 right_pin = 0xC0FFEE;
-	u32 pin = motor == motor::left ? left_pin : right_pin;
+	const u32 pin{motor == motor::left ? left_pin : right_pin};
 
-	if (i32 code = gpioServo(pin, us); code < 0)
-	{
-		throw gpio_error{code};
-	}
+	PIGPIO_CALL(gpioServo(pin, us));
 }
 
 } // namespace gpio

@@ -31,3 +31,4 @@ AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
 PointerAlignment: Left
+AlwaysBreakTemplateDeclarations: Yes
