@@ -12,6 +12,9 @@ public:
 	explicit gpio_error(i32 error_code);
 };
 
+void init();
+void shutdown();
+
 } // namespace gpio
 
 #endif
