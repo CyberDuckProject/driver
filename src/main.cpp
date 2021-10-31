@@ -1,4 +1,4 @@
-#include "gpio_error.h"
+#include "gpio.h"
 #include <pigpio.h>
 
 int main()
@@ -6,7 +6,7 @@ int main()
 	i32 result = gpioInitialise();
 	if (result < 0)
 	{
-		throw gpio_error{result};
+		throw gpio::gpio_error{result};
 	}
 
 	gpioTerminate();

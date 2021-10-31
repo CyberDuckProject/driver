@@ -1,7 +1,8 @@
-#include "gpio_error.h"
+#include "gpio.h"
 
 #include <pigpio.h>
 
+namespace gpio {
 namespace {
 
 class gpio_category : public std::error_category
@@ -316,3 +317,5 @@ gpio_error::gpio_error(i32 error_code)
     : std::system_error{std::error_code{error_code, category}}
 {
 }
+
+} // namespace gpio

@@ -1,8 +1,8 @@
 add_executable(driver
 	main.cpp
 	fundamental_types.h
-	gpio_error.h
-	gpio_error.cpp
+	gpio.h
+	gpio.cpp
 )
 
 # Find dependencies
