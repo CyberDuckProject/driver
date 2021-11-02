@@ -1,10 +1,9 @@
-#ifndef GPIO_H
-#define GPIO_H
+#pragma once
 
 #include "fundamental_types.h"
 #include <system_error>
 
-namespace gpio {
+namespace io {
 
 class gpio_error : public std::system_error
 {
@@ -15,14 +14,4 @@ public:
 void init();
 void shutdown();
 
-enum class motor
-{
-	left,
-	right
-};
-
-void set_speed(motor motor, f32 speed);
-
-} // namespace gpio
-
-#endif
+} // namespace io

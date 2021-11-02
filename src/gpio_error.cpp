@@ -1,9 +1,8 @@
-#include "gpio.h"
+#include "io.h"
 
-#include <cassert>
 #include <pigpio.h>
 
-namespace gpio {
+namespace io {
 namespace {
 
 class gpio_category : public std::error_category
@@ -314,49 +313,9 @@ public:
 
 } // namespace
 
-#define PIGPIO_CALL(call)                                                      \
-	do                                                                         \
-	{                                                                          \
-		if (const i32 code = call; code < 0)                                    \
-		{                                                                      \
-			throw gpio_error{code};                                            \
-		}                                                                      \
-	}                                                                          \
-	while (false)
-
 gpio_error::gpio_error(const i32 error_code)
     : std::system_error{std::error_code{error_code, category}}
 {
 }
 
-void init()
-{
-	// Disable printing
-	const u32 internals = gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER;
-	gpioCfgSetInternals(internals);
-
-	PIGPIO_CALL(gpioInitialise());
-
-	set_speed(motor::left, 0.0f);
-	set_speed(motor::right, 0.0f);
-}
-
-void shutdown()
-{
-	gpioTerminate();
-}
-
-void set_speed(const motor motor, const f32 speed)
-{
-	assert(speed >= 0.0f && speed <= 1.0f);
-	const u32 us = 1000 + static_cast<u32>(speed * 1000.0f);
-
-	// TODO: get actual pin numbers
-	constexpr u32 left_pin = 0xC0FFEE;
-	constexpr u32 right_pin = 0xC0FFEE;
-	const u32 pin = motor == motor::left ? left_pin : right_pin;
-
-	PIGPIO_CALL(gpioServo(pin, us));
-}
-
-} // namespace gpio
+} // namespace io
