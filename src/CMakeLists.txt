@@ -8,9 +8,12 @@ add_executable(driver
 
 # Find dependencies
 find_package(pigpio REQUIRED)
+find_package(Boost REQUIRED
+	thread system
+)
 
 # Link against libraries
 target_link_libraries(driver PRIVATE
 	pigpio::pigpio
-	third_party::Asio
+	Boost::thread Boost::system
 )
