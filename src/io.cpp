@@ -8,10 +8,10 @@ namespace io {
 void init()
 {
 	// Disable printing
-	const u32 internals = gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER;
+	u32 internals{gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER};
 	gpioCfgSetInternals(internals);
 
-	if (i32 code = gpioInitialise(); code < 0)
+	if (i32 code{gpioInitialise()}; code < 0)
 	{
 		throw gpio_error{code};
 	}
