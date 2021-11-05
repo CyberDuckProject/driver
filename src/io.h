@@ -14,6 +14,14 @@ public:
 void init();
 void shutdown();
 
+enum class motor
+{
+	left,
+	right
+};
+
+void set_speed(motor motor, f32 speed);
+
 f32 water_temperature();
 
 } // namespace io

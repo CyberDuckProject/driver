@@ -20,6 +20,9 @@ constexpr u32 adc_baud{1000000};
 constexpr f32 adc_ref{3.3f};
 i32 adc;
 
+constexpr u32 left_motor_gpio{13};
+constexpr u32 right_motor_gpio{12};
+
 constexpr u8 temp_channel{0};
 
 f32 read_adc(u8 channel)
@@ -43,6 +46,9 @@ void init()
 	gpioCfgSetInternals(internals);
 
 	GPIO_CALL(gpioInitialise());
+
+	set_speed(motor::left, 0.0f);
+	set_speed(motor::right, 0.0f);
 	
 	GPIO_CALL(adc = spiOpen(0, adc_baud, 0));
 }
@@ -55,6 +61,15 @@ void shutdown()
 	}
 
 	gpioTerminate();
+}
+
+void set_speed(motor motor, f32 speed)
+{
+	assert(speed >= 0.0f && speed <= 1.0f);
+	u32 us{1000 + static_cast<u32>(speed * 1000.0f)};
+
+	u32 gpio{motor == motor::left ? left_motor_gpio : right_motor_gpio};
+	GPIO_CALL(gpioServo(gpio, us));
 }
 
 f32 water_temperature()
