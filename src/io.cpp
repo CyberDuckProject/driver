@@ -20,6 +20,8 @@ constexpr u32 adc_baud{1000000};
 constexpr f32 adc_ref{3.3f};
 i32 adc;
 
+constexpr u8 temp_channel{0};
+
 f32 read_adc(u8 channel)
 {
 	assert(channel <= 7);
@@ -52,6 +54,12 @@ void shutdown()
 	}
 
 	gpioTerminate();
+}
+
+f32 water_temperature()
+{
+	f32 volts{read_adc(temp_channel)};
+	return (volts - 0.5f) * 100.0f;
 }
 
 } // namespace io

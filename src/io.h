@@ -14,4 +14,6 @@ public:
 void init();
 void shutdown();
 
+f32 water_temperature();
+
 } // namespace io
