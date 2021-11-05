@@ -16,7 +16,11 @@
 namespace io {
 namespace {
 
+constexpr u32 adc_baud{1000000};
+constexpr f32 adc_ref{3.3f};
 i32 adc;
+
+constexpr u8 temp_channel{0};
 
 f32 read_adc(u8 channel)
 {
@@ -27,8 +31,6 @@ f32 read_adc(u8 channel)
 	GPIO_CALL(spiXfer(adc, buf, readBuf, 3));
 
 	i32 value{((readBuf[1] << 8) | readBuf[2]) & 0x3FF};
-	
-	constexpr f32 adc_ref{3.3f};
 	return static_cast<f32>(value) * adc_ref / 1023.0f;
 }
 
@@ -42,7 +44,6 @@ void init()
 
 	GPIO_CALL(gpioInitialise());
 	
-	constexpr u32 adc_baud{1000000};
 	GPIO_CALL(adc = spiOpen(0, adc_baud, 0));
 }
 
@@ -58,7 +59,6 @@ void shutdown()
 
 f32 water_temperature()
 {
-	constexpr u8 temp_channel{0};
 	f32 volts{read_adc(temp_channel)};
 	return (volts - 0.5f) * 100.0f;
 }
