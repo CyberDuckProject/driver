@@ -2,6 +2,6 @@
 
 int main()
 {
-	io::init();
-	io::shutdown();
+    io::init();
+    io::shutdown();
 }

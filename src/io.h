@@ -8,7 +8,7 @@ namespace io {
 class gpio_error : public std::system_error
 {
 public:
-	explicit gpio_error(i32 error_code);
+    explicit gpio_error(i32 error_code);
 };
 
 void init();
@@ -16,8 +16,8 @@ void shutdown();
 
 enum class motor
 {
-	left,
-	right
+    left,
+    right
 };
 
 void set_speed(motor motor, f32 speed);

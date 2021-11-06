@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 # Project info
 project(driver
-	DESCRIPTION "CyberDuck driver"
-	LANGUAGES CXX
+    DESCRIPTION "CyberDuck driver"
+    LANGUAGES CXX
 )
 
 # Custom find modules
