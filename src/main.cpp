@@ -23,8 +23,8 @@ void accept(tcp::acceptor& acceptor)
 
                 if (!ec)
                 {
-                    io::set_speed(io::motor::left, data[0]);
-                    io::set_speed(io::motor::right, data[1]);
+                    io::set_left_motor(data[0]);
+                    io::set_right_motor(data[1]);
                 }
                 else if (ec == asio::error::eof)
                 {

@@ -16,16 +16,23 @@
 namespace io {
 namespace {
 
-constexpr u32 adc_baud{1000000};
-constexpr f32 adc_ref{3.3f};
+constexpr u32 left_motor{13};
+constexpr u32 right_motor{12};
+
+constexpr u32 eyes{6};
+constexpr u32 fan{7};
+
+constexpr u32 adc_channel{0};
+constexpr u8 temperature{0};
 i32 adc;
 
-constexpr u32 left_motor_gpio{13};
-constexpr u32 right_motor_gpio{12};
+u32 pulse_width(f32 speed)
+{
+    assert(speed >= 0.0f && speed <= 1.0f);
+    return 1000 + static_cast<u32>(speed * 1000.0f);
+}
 
-constexpr u8 temp_channel{0};
-
-f32 read_adc(u8 channel)
+f32 adc_voltage(u8 channel)
 {
     assert(channel <= 7);
 
@@ -34,23 +41,25 @@ f32 read_adc(u8 channel)
     GPIO_CALL(spiXfer(adc, buf, readBuf, 3));
 
     i32 value{((readBuf[1] << 8) | readBuf[2]) & 0x3FF};
-    return static_cast<f32>(value) * adc_ref / 1023.0f;
+    return static_cast<f32>(value) * 3.3f / 1023.0f;
 }
 
 } // namespace
 
 void init()
 {
-    // Disable printing
-    u32 internals{gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER};
-    gpioCfgSetInternals(internals);
-
+    gpioCfgSetInternals(gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER); // Disable printing
     GPIO_CALL(gpioInitialise());
 
-    set_speed(motor::left, 0.0f);
-    set_speed(motor::right, 0.0f);
+    set_left_motor(0.0f);
+    set_right_motor(0.0f);
 
-    GPIO_CALL(adc = spiOpen(0, adc_baud, 0));
+    GPIO_CALL(gpioSetMode(eyes, PI_OUTPUT));
+    GPIO_CALL(gpioSetMode(fan, PI_OUTPUT));
+    set_eyes(false);
+    set_fan(false);
+
+    GPIO_CALL(adc = spiOpen(adc_channel, 1000000, 0));
 }
 
 void shutdown()
@@ -63,18 +72,29 @@ void shutdown()
     gpioTerminate();
 }
 
-void set_speed(motor motor, f32 speed)
+void set_left_motor(f32 speed)
 {
-    assert(speed >= 0.0f && speed <= 1.0f);
-    u32 us{1000 + static_cast<u32>(speed * 1000.0f)};
+    GPIO_CALL(gpioServo(left_motor, pulse_width(speed)));
+}
 
-    u32 gpio{motor == motor::left ? left_motor_gpio : right_motor_gpio};
-    GPIO_CALL(gpioServo(gpio, us));
+void set_right_motor(f32 speed)
+{
+    GPIO_CALL(gpioServo(right_motor, pulse_width(speed)));
+}
+
+void set_eyes(bool on)
+{
+    GPIO_CALL(gpioWrite(eyes, on));
+}
+
+void set_fan(bool on)
+{
+    GPIO_CALL(gpioWrite(fan, on));
 }
 
 f32 water_temperature()
 {
-    f32 volts{read_adc(temp_channel)};
+    f32 volts{adc_voltage(temperature)};
     return (volts - 0.5f) * 100.0f;
 }
 
