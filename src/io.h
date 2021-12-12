@@ -21,5 +21,6 @@ void set_eyes(bool on);
 void set_fan(bool on);
 
 f32 water_temperature();
+f32 water_turbidity();
 
 } // namespace io

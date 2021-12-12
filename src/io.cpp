@@ -24,6 +24,7 @@ constexpr u32 fan = 7;
 
 constexpr u32 adc_channel = 0;
 constexpr u8 temperature = 0;
+constexpr u8 turbidity = 1;
 i32 adc;
 
 u32 pulse_width(f32 speed)
@@ -42,6 +43,12 @@ f32 adc_voltage(u8 channel)
 
     i32 value = ((readBuf[1] << 8) | readBuf[2]) & 0x3FF;
     return static_cast<f32>(value) * 3.3f / 1023.0f;
+}
+
+f32 reverse_divider(f32 output, f32 r1, f32 r2)
+{
+    f32 scale = r2 / (r1 + r2);
+    return output / scale;
 }
 
 } // namespace
@@ -96,6 +103,13 @@ f32 water_temperature()
 {
     f32 volts = adc_voltage(temperature);
     return (volts - 0.5f) * 100.0f;
+}
+
+f32 water_turbidity()
+{
+    f32 volts = adc_voltage(turbidity);
+    f32 x = reverse_divider(volts, 33000, 56000);
+    return -1120.4f * x * x + 5742.3f * x - 4352.9f;
 }
 
 } // namespace io
