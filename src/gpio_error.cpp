@@ -313,8 +313,7 @@ public:
 
 } // namespace
 
-gpio_error::gpio_error(const i32 error_code)
-    : std::system_error{std::error_code{error_code, category}}
+gpio_error::gpio_error(i32 error_code) : std::system_error{std::error_code{error_code, category}}
 {
 }
 

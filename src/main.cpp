@@ -45,7 +45,7 @@ int main()
 {
     io::init();
 
-    asio::io_context ctx{};
+    asio::io_context ctx;
     tcp::acceptor acceptor{ctx, {tcp::v4(), 13}};
     accept(acceptor);
     ctx.run();

@@ -16,14 +16,14 @@
 namespace io {
 namespace {
 
-constexpr u32 left_motor{13};
-constexpr u32 right_motor{12};
+constexpr u32 left_motor = 13;
+constexpr u32 right_motor = 12;
 
-constexpr u32 eyes{6};
-constexpr u32 fan{7};
+constexpr u32 eyes = 6;
+constexpr u32 fan = 7;
 
-constexpr u32 adc_channel{0};
-constexpr u8 temperature{0};
+constexpr u32 adc_channel = 0;
+constexpr u8 temperature = 0;
 i32 adc;
 
 u32 pulse_width(f32 speed)
@@ -36,11 +36,11 @@ f32 adc_voltage(u8 channel)
 {
     assert(channel <= 7);
 
-    char buf[3]{1, static_cast<char>((8 + channel) << 4), 0};
+    char buf[3] = {1, static_cast<char>((8 + channel) << 4), 0};
     char readBuf[3];
     GPIO_CALL(spiXfer(adc, buf, readBuf, 3));
 
-    i32 value{((readBuf[1] << 8) | readBuf[2]) & 0x3FF};
+    i32 value = ((readBuf[1] << 8) | readBuf[2]) & 0x3FF;
     return static_cast<f32>(value) * 3.3f / 1023.0f;
 }
 
@@ -94,7 +94,7 @@ void set_fan(bool on)
 
 f32 water_temperature()
 {
-    f32 volts{adc_voltage(temperature)};
+    f32 volts = adc_voltage(temperature);
     return (volts - 0.5f) * 100.0f;
 }
 
