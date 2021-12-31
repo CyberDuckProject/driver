@@ -76,12 +76,12 @@ void server::receive()
     assert(connected());
 
     // TODO: add support for different configs
-    float data[2];
     session->socket.async_read_some(asio::buffer(data),
                                     [&](const boost::system::error_code& ec, std::size_t bytes) {
         if (!ec)
         {
             {
+                BOOST_LOG_TRIVIAL(debug) << bytes << ' ' << data[0] << ' ' << data[1];
                 std::unique_lock lock{cfg_mutex};
                 cfg.storage = net::config::manual{data[0], data[1]};
             }

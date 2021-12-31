@@ -64,6 +64,8 @@ private:
     boost::asio::ip::udp::socket sender;
     const u16 remote_port;
 
+    // TODO: add support for different configs
+    float data[2];
     std::optional<session> session;
     std::mutex cfg_mutex;
     config cfg;
