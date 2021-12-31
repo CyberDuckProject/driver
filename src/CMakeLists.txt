@@ -4,6 +4,8 @@ add_executable(driver
     io.h
     io.cpp
     gpio_error.cpp
+    net.h
+    net.cpp
 )
 
 # Find dependencies

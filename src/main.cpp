@@ -1,54 +1,24 @@
 #include "io.h"
-#include <boost/asio.hpp>
+#include "net.h"
 #include <boost/log/trivial.hpp>
-
-namespace asio = boost::asio;
-using tcp = asio::ip::tcp;
-
-void accept(tcp::acceptor& acceptor)
-{
-    // TODO: set eyes to flash
-    BOOST_LOG_TRIVIAL(info) << "awaiting connection...";
-    acceptor.async_accept([&](boost::system::error_code ec, tcp::socket socket) {
-        if (!ec)
-        {
-            // TODO: set eyes to steady
-            BOOST_LOG_TRIVIAL(info) << "connected to " << socket.remote_endpoint();
-            while (true)
-            {
-                // TODO: this should be done on the main thread
-                float data[2];
-                boost::system::error_code ec;
-                socket.read_some(asio::buffer(data), ec);
-
-                if (!ec)
-                {
-                    io::set_left_motor(data[0]);
-                    io::set_right_motor(data[1]);
-                }
-                else if (ec == asio::error::eof)
-                {
-                    BOOST_LOG_TRIVIAL(info) << "disconnected";
-                    break;
-                }
-                else
-                {
-                    throw boost::system::system_error{ec};
-                }
-            }
-        }
-        accept(acceptor);
-    });
-}
 
 int main()
 {
     io::init();
 
-    asio::io_context ctx;
-    tcp::acceptor acceptor{ctx, {tcp::v4(), 13}};
-    accept(acceptor);
-    ctx.run();
+    net::server server{1333, 1512};
+
+    while (true)
+    {
+        net::config config{server.pop_config()};
+
+        // TODO: add support for different modes
+        config.handle<net::config::empty>([](net::config::empty) {});
+        config.handle<net::config::manual>([](net::config::manual cfg) {
+            io::set_left_motor(cfg.left);
+            io::set_right_motor(cfg.right);
+        });
+    }
 
     io::shutdown();
 }

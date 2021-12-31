@@ -34,3 +34,6 @@ PointerAlignment: Left
 AlwaysBreakTemplateDeclarations: Yes
 SpaceAfterTemplateKeyword: false
 ColumnLimit: 100
+LambdaBodyIndentation: OuterScope
+BreakConstructorInitializers: AfterColon
+# PackConstructorInitializers: Never (Clang 14)
