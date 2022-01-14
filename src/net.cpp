@@ -99,7 +99,6 @@ void server::receive()
         if (!ec)
         {
             {
-                BOOST_LOG_TRIVIAL(debug) << bytes << ' ' << data[0] << ' ' << data[1];
                 std::unique_lock lock{cfg_mutex};
                 cfg.storage = net::config::manual{data[0], data[1]};
             }
