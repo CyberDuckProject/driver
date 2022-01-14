@@ -14,7 +14,8 @@ int main()
         net::config config{server.pop_config()};
 
         config.handle<net::config::empty>([&](...) {
-            server.send(net::sensor_type::water_temperature, 4.2f);
+            if (server.connected())
+                server.send(net::sensor_type::water_temperature, io::water_temperature());
         });
 
         config.handle<net::config::manual>([](net::config::manual cfg) {
