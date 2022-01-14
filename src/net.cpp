@@ -1,6 +1,7 @@
 #include "net.h"
 
 #include <boost/asio.hpp>
+#define BOOST_LOG_DYN_LINK 1
 #include <boost/log/trivial.hpp>
 #include <optional>
 
