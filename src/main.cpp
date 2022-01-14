@@ -10,10 +10,13 @@ int main()
 
     while (true)
     {
+        // TODO: add support for different modes
         net::config config{server.pop_config()};
 
-        // TODO: add support for different modes
-        config.handle<net::config::empty>([](net::config::empty) {});
+        config.handle<net::config::empty>([&](...) {
+            server.send(net::sensor_type::water_temperature, 4.2f);
+        });
+
         config.handle<net::config::manual>([](net::config::manual cfg) {
             io::set_left_motor(cfg.left);
             io::set_right_motor(cfg.right);

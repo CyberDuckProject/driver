@@ -54,6 +54,24 @@ config server::pop_config()
     return copy;
 }
 
+void server::send(sensor_type sensor, f32 value)
+{
+    assert(connected());
+
+    struct
+    {
+        u8 code;
+        u64 timestamp;
+        f32 value;
+    } msg;
+
+    msg.code = static_cast<u8>(sensor);
+    msg.timestamp = std::time(nullptr);
+    msg.value = value;
+
+    sender.async_send_to(asio::buffer(&msg, sizeof(msg)), session->endpoint, [](...) {});
+}
+
 void server::accept()
 {
     acceptor.async_accept([&](boost::system::error_code ec, tcp::socket socket) {

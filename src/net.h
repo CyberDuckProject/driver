@@ -39,6 +39,16 @@ private:
     std::variant<empty, manual> storage;
 };
 
+enum class sensor_type : u8
+{
+    water_temperature = 1,
+    water_turbidity = 2,
+    atmospheric_dust = 3,
+    atmospheric_pressure = 4,
+    atmospheric_temperature = 5,
+    atmospheric_humidity = 6
+};
+
 class server
 {
 public:
@@ -47,6 +57,8 @@ public:
 
     bool connected() const;
     config pop_config();
+
+    void send(sensor_type sensor, f32 value);
 
 private:
     struct session
