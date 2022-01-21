@@ -58,13 +58,14 @@ int main()
 
     // init driver
     u8 dev_addr;
+    i8 result = BME280_OK;
     bme280_dev dev;
     dev.intf_ptr = &dev_addr;
     dev.intf = BME280_SPI_INTF;
     dev.read = spi_read;
     dev.write = spi_write;
     dev.delay_us = delay_us;
-    i8 result = bme280_init(&dev);
+    result = bme280_init(&dev);
     BOOST_LOG_TRIVIAL(debug) << "result: " << result;
 
     // shutdown spi
