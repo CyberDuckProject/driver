@@ -24,10 +24,13 @@ i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 
 i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
-    // write reg addr
-    spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
-    // write data
-    spiWrite(bme280, (char*)reg_data, len);
+    // prepend reg_addr to data
+    std::vector<u8> buffer(len + 1);
+    buffer[0] = reg_addr;
+    std::copy_n(reg_data, len, &buffer[1]);
+
+    // write buffer
+    spiWrite(bme280, (char*)buffer.data(), buffer.size());
 
     return 0;
 }
