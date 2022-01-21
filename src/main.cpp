@@ -15,7 +15,6 @@ void delay_us(u32 period, void* intf_ptr)
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
     // write reg addr
-    reg_addr |= (1 << 8);
     spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
     // read data
     spiRead(bme280, (char*)reg_data, len);
@@ -27,7 +26,7 @@ i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
     // prepend reg_addr to data
     std::vector<u8> buffer(len + 1);
-    buffer[0] = reg_addr;
+    buffer[0] = reg_addr | (1 << 8);
     std::copy_n(reg_data, len, &buffer[1]);
 
     // write buffer
