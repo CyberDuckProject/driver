@@ -1,28 +1,28 @@
 #include "io.h"
-#include "net.h"
+#define BOOST_LOG_DYN_LINK 1
 #include <boost/log/trivial.hpp>
+
+#include <bme280.h>
+#include <pigpio.h>
 
 int main()
 {
     io::init();
 
-    net::server server{1333, 1512};
+    u32 flags = 0 | (1 << 5);
+    i32 bme280 = spiOpen(1, 2000000, flags);
+    BOOST_LOG_TRIVIAL(debug) << "bme280 " << bme280;
 
-    while (true)
-    {
-        // TODO: add support for different modes
-        net::config config{server.pop_config()};
+    /*u8 dev_addr;
 
-        config.handle<net::config::empty>([&](...) {
-            if (server.connected())
-                server.send(net::sensor_type::water_temperature, io::water_temperature());
-        });
+    bme280_dev dev;
+    dev.intf_ptr = &dev_addr;
+    dev.intf = BME280_SPI_INTF;
+    dev.read = spi_read;
+    dev.write = spi_write;
+    dev.delay_us = delay_us;*/
 
-        config.handle<net::config::manual>([](net::config::manual cfg) {
-            io::set_left_motor(cfg.left);
-            io::set_right_motor(cfg.right);
-        });
-    }
+    spiClose(bme280);
 
     io::shutdown();
 }
