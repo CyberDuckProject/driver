@@ -18,4 +18,5 @@ find_package(Boost REQUIRED
 target_link_libraries(driver PRIVATE
     pigpio::pigpio
     Boost::thread Boost::system Boost::log
+    third_party::BME280
 )
