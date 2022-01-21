@@ -48,18 +48,38 @@ i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 
 void print_sensor_data(struct bme280_data* comp_data)
 {
+    float temp, press, hum;
+
 #ifdef BME280_FLOAT_ENABLE
-    printf("%0.2f, %0.2f, %0.2f\r\n", comp_data->temperature, comp_data->pressure,
-           comp_data->humidity);
+    temp = comp_data->temperature;
+    press = 0.01 * comp_data->pressure;
+    hum = comp_data->humidity;
 #else
-    printf("%ld, %ld, %ld\r\n", comp_data->temperature, comp_data->pressure, comp_data->humidity);
+#ifdef BME280_64BIT_ENABLE
+    temp = 0.01f * comp_data->temperature;
+    press = 0.0001f * comp_data->pressure;
+    hum = 1.0f / 1024.0f * comp_data->humidity;
+#else
+    temp = 0.01f * comp_data->temperature;
+    press = 0.01f * comp_data->pressure;
+    hum = 1.0f / 1024.0f * comp_data->humidity;
 #endif
+#endif
+    printf("%0.2lf deg C, %0.2lf hPa, %0.2lf%%\n", temp, press, hum);
 }
 
-int8_t stream_sensor_data_normal_mode(struct bme280_dev* dev)
+int8_t stream_sensor_data_forced_mode(struct bme280_dev* dev)
 {
-    int8_t rslt;
-    uint8_t settings_sel;
+    /* Variable to define the result */
+    int8_t rslt = BME280_OK;
+
+    /* Variable to define the selecting sensors */
+    uint8_t settings_sel = 0;
+
+    /* Variable to store minimum wait time between consecutive measurement in force mode */
+    uint32_t req_delay;
+
+    /* Structure to get the pressure, temperature and humidity values */
     struct bme280_data comp_data;
 
     /* Recommended mode of operation: Indoor navigation */
@@ -67,22 +87,45 @@ int8_t stream_sensor_data_normal_mode(struct bme280_dev* dev)
     dev->settings.osr_p = BME280_OVERSAMPLING_16X;
     dev->settings.osr_t = BME280_OVERSAMPLING_2X;
     dev->settings.filter = BME280_FILTER_COEFF_16;
-    dev->settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
 
-    settings_sel = BME280_OSR_PRESS_SEL;
-    settings_sel |= BME280_OSR_TEMP_SEL;
-    settings_sel |= BME280_OSR_HUM_SEL;
-    settings_sel |= BME280_STANDBY_SEL;
-    settings_sel |= BME280_FILTER_SEL;
+    settings_sel =
+        BME280_OSR_PRESS_SEL | BME280_OSR_TEMP_SEL | BME280_OSR_HUM_SEL | BME280_FILTER_SEL;
+
+    /* Set the sensor settings */
     rslt = bme280_set_sensor_settings(settings_sel, dev);
-    rslt = bme280_set_sensor_mode(BME280_NORMAL_MODE, dev);
+    if (rslt != BME280_OK)
+    {
+        fprintf(stderr, "Failed to set sensor settings (code %+d).", rslt);
 
-    printf("Temperature, Pressure, Humidity\r\n");
+        return rslt;
+    }
+
+    printf("Temperature, Pressure, Humidity\n");
+
+    /*Calculate the minimum delay required between consecutive measurement based upon the sensor
+     * enabled and the oversampling configuration. */
+    req_delay = bme280_cal_meas_delay(&dev->settings);
+
+    /* Continuously stream sensor data */
     while (1)
     {
-        /* Delay while the sensor completes a measurement */
-        dev->delay_us(70000, dev->intf_ptr);
+        /* Set the sensor to forced mode */
+        rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, dev);
+        if (rslt != BME280_OK)
+        {
+            fprintf(stderr, "Failed to set sensor mode (code %+d).", rslt);
+            break;
+        }
+
+        /* Wait for the measurement to complete and print data */
+        dev->delay_us(req_delay, dev->intf_ptr);
         rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, dev);
+        if (rslt != BME280_OK)
+        {
+            fprintf(stderr, "Failed to get sensor data (code %+d).", rslt);
+            break;
+        }
+
         print_sensor_data(&comp_data);
     }
 
@@ -111,7 +154,7 @@ int main()
     result = bme280_init(&dev);
     BOOST_LOG_TRIVIAL(debug) << "result: " << result;
 
-    stream_sensor_data_normal_mode(&dev);
+    stream_sensor_data_forced_mode(&dev);
 
     // shutdown spi
     spiClose(bme280);
