@@ -15,7 +15,7 @@ void delay_us(u32 period, void* intf_ptr)
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
     // write reg addr
-    spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
+    spiWrite(bme280, (char*)&reg_addr, 1);
     // read data
     spiRead(bme280, (char*)reg_data, len);
 
@@ -24,13 +24,10 @@ i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 
 i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
-    // prepend reg_addr to data
-    std::vector<u8> buffer(len + 1);
-    buffer[0] = reg_addr | (1 << 8);
-    std::copy_n(reg_data, len, &buffer[1]);
-
-    // write buffer
-    spiWrite(bme280, (char*)buffer.data(), buffer.size());
+    // write reg addr
+    spiWrite(bme280, (char*)&reg_addr, 1);
+    // write data
+    spiWrite(bme280, (char*)reg_data, len);
 
     return 0;
 }
@@ -126,8 +123,7 @@ int main()
     io::init();
 
     // init spi
-    u32 flags = 0 | (1 << 8);
-    bme280 = spiOpen(0, 2000000, flags);
+    bme280 = spiOpen(0, 2000000, PI_SPI_FLAGS_AUX_SPI(1));
     BOOST_LOG_TRIVIAL(debug) << "bme280: " << bme280;
 
     // init driver
