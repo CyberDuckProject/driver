@@ -81,7 +81,11 @@ int main()
 
     // init spi
     bme280 = spiOpen(0, 2000000, PI_SPI_FLAGS_AUX_SPI(1));
-    BOOST_LOG_TRIVIAL(debug) << "bme280: " << bme280;
+    if (bme280 < 0)
+    {
+        BOOST_LOG_TRIVIAL(error) << "failed to open spi (" << bme280 << ")";
+        return EXIT_FAILURE;
+    }
 
     // init driver
     u8 dev_addr;
@@ -93,9 +97,18 @@ int main()
     dev.write = spi_write;
     dev.delay_us = delay_us;
     result = bme280_init(&dev);
-    BOOST_LOG_TRIVIAL(debug) << "result: " << result;
+    if (result < 0)
+    {
+        BOOST_LOG_TRIVIAL(error) << "failed to init bme280 (" << result << ")";
+        return EXIT_FAILURE;
+    }
 
-    stream_sensor_data_normal_mode(&dev);
+    result = stream_sensor_data_normal_mode(&dev);
+    if (result < 0)
+    {
+        BOOST_LOG_TRIVIAL(error) << "failed to stream sensor data (" << result << ")";
+        return EXIT_FAILURE;
+    }
 
     // shutdown spi
     spiClose(bme280);
