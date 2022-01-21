@@ -15,6 +15,7 @@ void delay_us(u32 period, void* intf_ptr)
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
     // write reg addr
+    reg_addr |= (1 << 8);
     spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
     // read data
     spiRead(bme280, (char*)reg_data, len);
