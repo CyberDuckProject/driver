@@ -14,34 +14,20 @@ void delay_us(u32 period, void* intf_ptr)
 
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
-    // set cs
-    gpioWrite(18, 1);
-    gpioWrite(18, 0);
-
     // write reg addr
     spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
     // read data
     spiRead(bme280, (char*)reg_data, len);
-
-    // set cs
-    gpioWrite(18, 1);
 
     return 0;
 }
 
 i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
-    // set cs
-    gpioWrite(18, 1);
-    gpioWrite(18, 0);
-
     // write reg addr
     spiWrite(bme280, (char*)&reg_addr, sizeof(reg_addr));
     // write data
     spiWrite(bme280, (char*)reg_data, len);
-
-    // set cs
-    gpioWrite(18, 1);
 
     return 0;
 }
@@ -137,9 +123,8 @@ int main()
     io::init();
 
     // init spi
-    u32 flags = 0 | (1 << 5);
+    u32 flags = 0 | (1 << 8);
     bme280 = spiOpen(1, 2000000, flags);
-    gpioSetMode(18, PI_OUTPUT);
     BOOST_LOG_TRIVIAL(debug) << "bme280: " << bme280;
 
     // init driver
