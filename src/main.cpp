@@ -124,7 +124,7 @@ int main()
 
     // init spi
     u32 flags = 0 | (1 << 8);
-    bme280 = spiOpen(1, 2000000, flags);
+    bme280 = spiOpen(0, 2000000, flags);
     BOOST_LOG_TRIVIAL(debug) << "bme280: " << bme280;
 
     // init driver
