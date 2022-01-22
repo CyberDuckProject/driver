@@ -22,28 +22,15 @@ void delay_us(u32 period, void* intf_ptr)
     usleep(period);
 }
 
-i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
+i8 i2c_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
-    // prepare xfer buffer
-    std::vector<u8> buffer(len);
-    buffer[0] = reg_addr;
-    
-    // xfer
-    GPIO_CALL(spiXfer(bme280, (char*)buffer.data(), (char*)reg_data, len));
-
+    GPIO_CALL(i2cReadI2CBlockData(bme280, reg_addr, (char*)reg_data, len));
     return 0;
 }
 
-i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
+i8 i2c_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
-    // prepend reg_addr
-    std::vector<u8> buffer(len + 1);
-    buffer[0] = reg_addr;
-    std::copy_n(reg_data, len, &buffer[1]);
-
-    // write buffer
-    GPIO_CALL(spiWrite(bme280, (char*)buffer.data(), buffer.size()));
-
+    GPIO_CALL(i2cWriteI2CBlockData(bme280, reg_addr, (char*)reg_data, len));
     return 0;
 }
 
@@ -94,33 +81,27 @@ int main()
 {
     io::init();
 
-    // init spi
-    GPIO_CALL(bme280 = spiOpen(0, 2000000, PI_SPI_FLAGS_AUX_SPI(1)));
+    // open i2c
+    GPIO_CALL(bme280 = i2cOpen(1, 0x77, 0));
 
     // init driver
-    i32 result = BME280_OK;
-    bme280_dev dev;
-    dev.intf_ptr = nullptr;
-    dev.intf = BME280_SPI_INTF;
-    dev.read = spi_read;
-    dev.write = spi_write;
+    struct bme280_dev dev;
+    dev.intf = BME280_I2C_INTF;
+    dev.read = i2c_read;
+    dev.write = i2c_write;
     dev.delay_us = delay_us;
-    result = bme280_init(&dev);
-    if (result < 0)
+    i32 rslt = bme280_init(&dev);
+    if (rslt != BME280_OK)
     {
-        BOOST_LOG_TRIVIAL(error) << "failed to init bme280 (" << result << ")";
+        BOOST_LOG_TRIVIAL(error) << "failed to init bme280 (" << rslt << ")";
         return EXIT_FAILURE;
     }
 
-    result = stream_sensor_data_normal_mode(&dev);
-    if (result < 0)
-    {
-        BOOST_LOG_TRIVIAL(error) << "failed to stream sensor data (" << result << ")";
-        return EXIT_FAILURE;
-    }
+    // stream sensor data
+    stream_sensor_data_normal_mode(&dev);
 
-    // shutdown spi
-    GPIO_CALL(spiClose(bme280));
+    // close i2c
+    i2cClose(bme280);
 
     io::shutdown();
 }
