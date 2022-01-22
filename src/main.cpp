@@ -24,20 +24,25 @@ void delay_us(u32 period, void* intf_ptr)
 
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
-    // write reg addr
-    GPIO_CALL(spiWrite(bme280, (char*)&reg_addr, 1));
-    // read data
-    GPIO_CALL(spiRead(bme280, (char*)reg_data, len));
+    // prepare xfer buffer
+    std::vector<u8> buffer(len);
+    buffer[0] = reg_addr;
+    
+    // xfer
+    GPIO_CALL(spiXfer(bme280, (char*)buffer.data(), (char*)reg_data, len));
 
     return 0;
 }
 
 i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
-    // write reg addr
-    GPIO_CALL(spiWrite(bme280, (char*)&reg_addr, 1));
-    // write data
-    GPIO_CALL(spiWrite(bme280, (char*)reg_data, len));
+    // prepend reg_addr
+    std::vector<u8> buffer(len + 1);
+    buffer[0] = reg_addr;
+    std::copy_n(reg_data, len, &buffer[1]);
+
+    // write buffer
+    GPIO_CALL(spiWrite(bme280, (char*)buffer.data(), buffer.size()));
 
     return 0;
 }
