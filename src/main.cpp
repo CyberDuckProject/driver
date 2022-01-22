@@ -5,6 +5,16 @@
 #include <bme280.h>
 #include <pigpio.h>
 
+#define GPIO_CALL(call)                                                                            \
+    do                                                                                             \
+    {                                                                                              \
+        if (i32 code = call; code < 0)                                                             \
+        {                                                                                          \
+            throw io::gpio_error{code};                                                            \
+        }                                                                                          \
+    }                                                                                              \
+    while (false)
+
 i32 bme280;
 
 void delay_us(u32 period, void* intf_ptr)
@@ -15,9 +25,9 @@ void delay_us(u32 period, void* intf_ptr)
 i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 {
     // write reg addr
-    spiWrite(bme280, (char*)&reg_addr, 1);
+    GPIO_CALL(spiWrite(bme280, (char*)&reg_addr, 1));
     // read data
-    spiRead(bme280, (char*)reg_data, len);
+    GPIO_CALL(spiRead(bme280, (char*)reg_data, len));
 
     return 0;
 }
@@ -25,9 +35,9 @@ i8 spi_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
 i8 spi_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
     // write reg addr
-    spiWrite(bme280, (char*)&reg_addr, 1);
+    GPIO_CALL(spiWrite(bme280, (char*)&reg_addr, 1));
     // write data
-    spiWrite(bme280, (char*)reg_data, len);
+    GPIO_CALL(spiWrite(bme280, (char*)reg_data, len));
 
     return 0;
 }
@@ -80,18 +90,12 @@ int main()
     io::init();
 
     // init spi
-    bme280 = spiOpen(0, 2000000, PI_SPI_FLAGS_AUX_SPI(1));
-    if (bme280 < 0)
-    {
-        BOOST_LOG_TRIVIAL(error) << "failed to open spi (" << bme280 << ")";
-        return EXIT_FAILURE;
-    }
+    GPIO_CALL(bme280 = spiOpen(0, 2000000, PI_SPI_FLAGS_AUX_SPI(1)));
 
     // init driver
-    u8 dev_addr;
-    i8 result = BME280_OK;
+    i32 result = BME280_OK;
     bme280_dev dev;
-    dev.intf_ptr = &dev_addr;
+    dev.intf_ptr = nullptr;
     dev.intf = BME280_SPI_INTF;
     dev.read = spi_read;
     dev.write = spi_write;
@@ -111,7 +115,7 @@ int main()
     }
 
     // shutdown spi
-    spiClose(bme280);
+    GPIO_CALL(spiClose(bme280));
 
     io::shutdown();
 }
