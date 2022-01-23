@@ -6,7 +6,7 @@
 #define GPIO_CALL(call)                                                                            \
     do                                                                                             \
     {                                                                                              \
-        if (i32 code = call; code < 0)                                                             \
+        if (i32 code = (call); code < 0)                                                           \
         {                                                                                          \
             throw gpio_error{code};                                                                \
         }                                                                                          \
@@ -71,7 +71,7 @@ void init()
 
 void shutdown()
 {
-    if (adc > 0)
+    if (adc >= 0)
     {
         spiClose(adc);
     }
