@@ -22,5 +22,15 @@ void set_fan(bool on);
 
 f32 water_temperature();
 f32 water_turbidity();
+f32 atmospheric_dust();
+
+struct weather_data
+{
+    f32 pressure;
+    f32 temperature;
+    f32 humidity;
+};
+
+weather_data weather();
 
 } // namespace io
