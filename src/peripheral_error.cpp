@@ -1,16 +1,15 @@
-#include "io.h"
+#include "peripheral_error.h"
 
 #include <pigpio.h>
 
-namespace io {
 namespace {
 
-class gpio_category : public std::error_category
+class peripheral_category : public std::error_category
 {
 public:
     const char* name() const noexcept override
     {
-        return "gpio";
+        return "peripheral";
     }
 
     std::string message(i32 condition) const override
@@ -309,12 +308,11 @@ public:
             return "unknown error";
         }
     }
-} category;
+} peripheral_category;
 
 } // namespace
 
-gpio_error::gpio_error(i32 error_code) : std::system_error{std::error_code{error_code, category}}
+peripheral_error::peripheral_error(i32 error_code) :
+    std::system_error{std::error_code{error_code, peripheral_category}}
 {
 }
-
-} // namespace io

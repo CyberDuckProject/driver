@@ -1,9 +1,10 @@
 add_executable(driver
     main.cpp
     fundamental_types.h
-    io.h
-    io.cpp
-    gpio_error.cpp
+    peripheral_error.h
+    peripheral_error.cpp
+    peripherals.h
+    peripherals.cpp
     net.h
     net.cpp
 )
