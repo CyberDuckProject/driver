@@ -124,6 +124,21 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom)
     dev->write = i2c_write;
     dev->delay_us = i2c_delay_us;
     BME280_CALL(bme280_init(dev.get()));
+
+    u8 settings_sel;
+    // Recommended mode of operation: Indoor navigation
+    dev->settings.osr_h = BME280_OVERSAMPLING_1X;
+    dev->settings.osr_p = BME280_OVERSAMPLING_16X;
+    dev->settings.osr_t = BME280_OVERSAMPLING_2X;
+    dev->settings.filter = BME280_FILTER_COEFF_16;
+    dev->settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
+    settings_sel = BME280_OSR_PRESS_SEL;
+    settings_sel |= BME280_OSR_TEMP_SEL;
+    settings_sel |= BME280_OSR_HUM_SEL;
+    settings_sel |= BME280_STANDBY_SEL;
+    settings_sel |= BME280_FILTER_SEL;
+    BME280_CALL(bme280_set_sensor_settings(settings_sel, dev.get()));
+    BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev.get()));
 }
 
 bme280::~bme280()
