@@ -8,10 +8,12 @@ int main()
     // output_pin eyes{6};
     // output_pin fan{7};
     // adc ain{false, 0, 3.3f};
-    
+
     bme280 env{22, 0x76, {19, 21}};
-    bme280_readout data = env.read();
-    BOOST_LOG_TRIVIAL(info) << "Humidity: " << data.humidity;
-    BOOST_LOG_TRIVIAL(info) << "Temperature: " << data.temperature;
-    BOOST_LOG_TRIVIAL(info) << "Pressure: " << data.pressure;
+    while (true)
+    {
+        bme280_readout data = env.read();
+        BOOST_LOG_TRIVIAL(info) << data.humidity << ' ' << data.temperature << ' ' << data.pressure;
+        usleep(70000);
+    }
 }
