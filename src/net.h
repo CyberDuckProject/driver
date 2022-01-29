@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NET_H
+#define NET_H
 
 #include "fundamental_types.h"
 #include <boost/asio.hpp>
@@ -84,3 +85,5 @@ private:
 };
 
 } // namespace net
+
+#endif
