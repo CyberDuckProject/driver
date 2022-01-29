@@ -21,3 +21,6 @@ target_link_libraries(driver PRIVATE
     Boost::thread Boost::system Boost::log
     third_party::BME280
 )
+
+# Compile definitions
+target_compile_definitions(driver PRIVATE BOOST_LOG_DYN_LINK)
