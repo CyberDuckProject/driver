@@ -11,7 +11,7 @@
     {                                                                                              \
         if (i32 code = (call); code < 0)                                                           \
         {                                                                                          \
-            throw ::peripheral_error{code};                                                        \
+            throw ::peripheral_error{code, false};                                                 \
         }                                                                                          \
     }                                                                                              \
     while (false)

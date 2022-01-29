@@ -7,7 +7,7 @@
 class peripheral_error : public std::system_error
 {
 public:
-    explicit peripheral_error(i32 error_code);
+    explicit peripheral_error(i32 error_code, bool bme280);
 };
 
 #endif

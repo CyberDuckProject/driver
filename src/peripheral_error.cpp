@@ -1,6 +1,9 @@
 #include "peripheral_error.h"
 
+#include <bme280.h>
 #include <pigpio.h>
+
+#define BME280_CODE(x) (-200 + (x))
 
 namespace {
 
@@ -304,6 +307,18 @@ public:
             return "not available on BCM2711";
         case PI_ONLY_ON_BCM2711:
             return "only available on BCM2711";
+        case BME280_CODE(BME280_E_NULL_PTR):
+            return "null pointer error";
+        case BME280_CODE(BME280_E_DEV_NOT_FOUND):
+            return "device not found";
+        case BME280_CODE(BME280_E_INVALID_LEN):
+            return "invalid length";
+        case BME280_CODE(BME280_E_COMM_FAIL):
+            return "communication fail";
+        case BME280_CODE(BME280_E_SLEEP_MODE_FAIL):
+            return "sleep mode fail";
+        case BME280_CODE(BME280_E_NVM_COPY_FAILED):
+            return "NVM copy failed";
         default:
             return "unknown error";
         }
@@ -312,7 +327,8 @@ public:
 
 } // namespace
 
-peripheral_error::peripheral_error(i32 error_code) :
-    std::system_error{std::error_code{error_code, peripheral_category}}
+peripheral_error::peripheral_error(i32 error_code, bool bme280) :
+    std::system_error{
+        std::error_code{bme280 ? BME280_CODE(error_code) : error_code, peripheral_category}}
 {
 }
