@@ -149,6 +149,18 @@ bme280::~bme280()
     }
 }
 
+bme280_readout bme280::read() const
+{
+    bme280_data data;
+    BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, dev.get()));
+    
+    bme280_readout result;
+    result.humidity = data.humidity;
+    result.temperature = data.temperature;
+    result.pressure = data.pressure;
+    return result;
+}
+
 output_pin::output_pin(u32 broadcom) : pin{broadcom}
 {
     PIGPIO_CALL(gpioSetMode(pin, PI_OUTPUT));
