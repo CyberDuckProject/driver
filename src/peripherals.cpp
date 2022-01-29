@@ -15,6 +15,15 @@
         }                                                                                          \
     }                                                                                              \
     while (false)
+#define BME280_CALL(call)                                                                          \
+    do                                                                                             \
+    {                                                                                              \
+        if (i32 code = (call); code < 0)                                                           \
+        {                                                                                          \
+            throw ::peripheral_error{code, true};                                                  \
+        }                                                                                          \
+    }                                                                                              \
+    while (false)
 
 namespace {
 
@@ -34,11 +43,28 @@ public:
     }
 } pigpio;
 
+void i2c_delay_us(u32 period, void* intf_ptr)
+{
+    usleep(period);
+}
+
+i8 i2c_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
+{
+    i32 handle = *(i32*)intf_ptr;
+    return i2cReadI2CBlockData(handle, reg_addr, (char*)reg_data, len) > 0;
+}
+
+i8 i2c_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
+{
+    i32 handle = *(i32*)intf_ptr;
+    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) > 0;
+}
+
 } // namespace
 
 motor::motor(u32 broadcom) : pin{broadcom}
 {
-    PIGPIO_CALL(gpioServo(pin, 1000));
+    set_speed(0.0f);
 }
 
 motor::~motor()
@@ -83,6 +109,29 @@ f32 adc::read(u32 channel) const
 
     i32 value = ((read_buf[1] << 8) | read_buf[2]) & 0x3FF;
     return static_cast<f32>(value) * vref / 1023.0f;
+}
+
+bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom)
+{
+    PIGPIO_CALL(gpioSetPullUpDown(broadcom.first, PI_PUD_UP));
+    PIGPIO_CALL(gpioSetPullUpDown(broadcom.second, PI_PUD_UP));
+    PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
+
+    dev = std::make_unique<bme280_dev>();
+    dev->intf = BME280_I2C_INTF;
+    dev->intf_ptr = &handle;
+    dev->read = i2c_read;
+    dev->write = i2c_write;
+    dev->delay_us = i2c_delay_us;
+    BME280_CALL(bme280_init(dev.get()));
+}
+
+bme280::~bme280()
+{
+    if (handle >= 0)
+    {
+        i2cClose(handle);
+    }
 }
 
 output_pin::output_pin(u32 broadcom) : pin{broadcom}
