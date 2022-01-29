@@ -139,6 +139,10 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom)
     settings_sel |= BME280_FILTER_SEL;
     BME280_CALL(bme280_set_sensor_settings(settings_sel, dev.get()));
     BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev.get()));
+
+    // First readout is always incorrect
+    read();
+    usleep(70000);
 }
 
 bme280::~bme280()
