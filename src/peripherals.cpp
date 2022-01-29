@@ -125,14 +125,14 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom)
     dev->delay_us = i2c_delay_us;
     BME280_CALL(bme280_init(dev.get()));
 
-    u8 settings_sel;
-    // Recommended mode of operation: Indoor navigation
+    // TODO: Choose operation mode from section 3.5 of
+    // https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
     dev->settings.osr_h = BME280_OVERSAMPLING_1X;
     dev->settings.osr_p = BME280_OVERSAMPLING_16X;
     dev->settings.osr_t = BME280_OVERSAMPLING_2X;
     dev->settings.filter = BME280_FILTER_COEFF_16;
     dev->settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
-    settings_sel = BME280_OSR_PRESS_SEL;
+    u8 settings_sel = BME280_OSR_PRESS_SEL;
     settings_sel |= BME280_OSR_TEMP_SEL;
     settings_sel |= BME280_OSR_HUM_SEL;
     settings_sel |= BME280_STANDBY_SEL;
@@ -157,7 +157,7 @@ bme280_readout bme280::read() const
 {
     bme280_data data;
     BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, dev.get()));
-    
+
     bme280_readout result;
     result.humidity = data.humidity;
     result.temperature = data.temperature;
