@@ -48,6 +48,7 @@ public:
     bme280_readout read() const;
 
 private:
+    std::pair<u32, u32> pins;
     i32 handle;
     std::unique_ptr<bme280_dev> dev;
 };

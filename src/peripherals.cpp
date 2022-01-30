@@ -111,10 +111,10 @@ f32 adc::read(u32 channel) const
     return static_cast<f32>(value) * vref / 1023.0f;
 }
 
-bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom)
+bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) : pins{broadcom}
 {
-    PIGPIO_CALL(gpioSetPullUpDown(broadcom.first, PI_PUD_UP));
-    PIGPIO_CALL(gpioSetPullUpDown(broadcom.second, PI_PUD_UP));
+    PIGPIO_CALL(gpioSetPullUpDown(pins.first, PI_PUD_UP));
+    PIGPIO_CALL(gpioSetPullUpDown(pins.second, PI_PUD_UP));
     PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
 
     dev = std::make_unique<bme280_dev>();
@@ -147,6 +147,9 @@ bme280::~bme280()
     {
         i2cClose(handle);
     }
+
+    gpioSetPullUpDown(pins.first, PI_PUD_OFF);
+    gpioSetPullUpDown(pins.second, PI_PUD_OFF);
 }
 
 bme280_readout bme280::read() const
