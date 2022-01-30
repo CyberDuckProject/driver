@@ -111,19 +111,20 @@ f32 adc::read(u32 channel) const
     return static_cast<f32>(value) * vref / 1023.0f;
 }
 
-bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) : pins{broadcom}
+bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
+    pins{broadcom}, storage{new bme280_dev{}}
 {
     PIGPIO_CALL(gpioSetPullUpDown(pins.first, PI_PUD_UP));
     PIGPIO_CALL(gpioSetPullUpDown(pins.second, PI_PUD_UP));
     PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
 
-    dev = std::make_unique<bme280_dev>();
+    auto* dev = static_cast<bme280_dev*>(storage);
     dev->intf = BME280_I2C_INTF;
     dev->intf_ptr = &handle;
     dev->read = i2c_read;
     dev->write = i2c_write;
     dev->delay_us = i2c_delay_us;
-    BME280_CALL(bme280_init(dev.get()));
+    BME280_CALL(bme280_init(dev));
 
     // TODO: Choose operation mode from section 3.5 of
     // https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
@@ -137,8 +138,8 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) : pins{broadc
     settings_sel |= BME280_OSR_HUM_SEL;
     settings_sel |= BME280_STANDBY_SEL;
     settings_sel |= BME280_FILTER_SEL;
-    BME280_CALL(bme280_set_sensor_settings(settings_sel, dev.get()));
-    BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev.get()));
+    BME280_CALL(bme280_set_sensor_settings(settings_sel, dev));
+    BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev));
 }
 
 bme280::~bme280()
@@ -150,12 +151,17 @@ bme280::~bme280()
 
     gpioSetPullUpDown(pins.first, PI_PUD_OFF);
     gpioSetPullUpDown(pins.second, PI_PUD_OFF);
+
+    if (storage)
+    {
+        delete static_cast<bme280_dev*>(storage);
+    }
 }
 
 bme280_readout bme280::read() const
 {
     bme280_data data;
-    BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, dev.get()));
+    BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, static_cast<bme280_dev*>(storage)));
 
     bme280_readout result;
     result.humidity = data.humidity;

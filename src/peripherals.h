@@ -2,7 +2,7 @@
 #define PERIPHERALS_H
 
 #include "fundamental_types.h"
-#include <memory>
+#include <utility>
 
 class motor
 {
@@ -37,8 +37,6 @@ struct bme280_readout
     f32 humidity;
 };
 
-struct bme280_dev;
-
 class bme280
 {
 public:
@@ -49,8 +47,8 @@ public:
 
 private:
     std::pair<u32, u32> pins;
+    void* storage;
     i32 handle;
-    std::unique_ptr<bme280_dev> dev;
 };
 
 class output_pin
