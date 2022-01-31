@@ -32,6 +32,8 @@ class pigpio
 public:
     pigpio()
     {
+        // Disable unused interfaces
+        gpioCfgInterfaces(PI_DISABLE_FIFO_IF | PI_DISABLE_SOCK_IF | PI_LOCALHOST_SOCK_IF);
         // Disable printing
         gpioCfgSetInternals(gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER);
         gpioInitialise();
