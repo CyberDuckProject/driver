@@ -5,6 +5,8 @@ add_executable(driver
     peripheral_error.cpp
     peripherals.h
     peripherals.cpp
+    io.h
+    io.cpp
     net.h
     net.cpp
 )

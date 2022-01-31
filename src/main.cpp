@@ -1,19 +1,21 @@
-#include "peripherals.h"
+#include "io.h"
 #include <boost/log/trivial.hpp>
+
+void guarded_main()
+{
+    BOOST_LOG_TRIVIAL(info) << "initializing I/O";
+    io io;
+}
 
 int main()
 {
-    // motor left{13};
-    // motor right{12};
-    // output_pin eyes{6};
-    // output_pin fan{7};
-    // adc ain{false, 0, 3.3f};
-
-    bme280 env{22, 0x76, {19, 21}};
-    while (true)
+    try
     {
-        bme280_readout data = env.read();
-        BOOST_LOG_TRIVIAL(info) << data.humidity << ' ' << data.temperature << ' ' << data.pressure;
-        usleep(70000);
+        guarded_main();
+    }
+    catch (const std::exception& e)
+    {
+        BOOST_LOG_TRIVIAL(fatal) << e.what();
+        return EXIT_FAILURE;
     }
 }
