@@ -12,7 +12,7 @@ file(STRINGS
     REGEX "#define PIGPIO_VERSION [0-9]+"
 )
 string(REGEX
-    MATCH [0-9]+
+    MATCH "[0-9]+"
     pigpio_VERSION ${pigpio_VERSION_MACRO}
 )
 
