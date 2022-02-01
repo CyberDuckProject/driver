@@ -17,6 +17,7 @@ public:
 
     std::string message(i32 condition) const override
     {
+        // Error messages taken from pigpio.h
         switch (condition)
         {
         case PI_INIT_FAILED:
