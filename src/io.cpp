@@ -21,7 +21,7 @@ void io::set_eyes(bool on)
 
 void io::set_fan(bool on)
 {
-    eyes.set_value(on);
+    fan.set_value(on);
 }
 
 f32 io::temperature() const
