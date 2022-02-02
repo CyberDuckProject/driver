@@ -1,9 +1,9 @@
 #include "io.h"
-#include <boost/log/trivial.hpp>
+#include "log.h"
 
 void guarded_main()
 {
-    BOOST_LOG_TRIVIAL(info) << "initializing I/O";
+    LOG(info) << "initializing I/O";
     io io;
 }
 
@@ -15,9 +15,9 @@ int main()
     }
     catch (const std::exception& e)
     {
-        BOOST_LOG_TRIVIAL(fatal) << e.what();
+        LOG(fatal) << e.what();
         return EXIT_FAILURE;
     }
-    
+
     return EXIT_SUCCESS;
 }
