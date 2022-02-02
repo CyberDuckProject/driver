@@ -18,4 +18,6 @@ int main()
         BOOST_LOG_TRIVIAL(fatal) << e.what();
         return EXIT_FAILURE;
     }
+    
+    return EXIT_SUCCESS;
 }
