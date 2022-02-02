@@ -106,8 +106,9 @@ f32 mcp3008::read(u32 channel) const
     assert(channel <= 7);
 
     // Single-ended channel selection
-    char tx[3] = {1, (8 + channel) << 4, 0};
-    char rx[3];
+    char tx[3], rx[3];
+    tx[0] = 1;
+    tx[1] = (8 + channel) << 4;
     PIGPIO_CALL(spiXfer(handle, tx, rx, 3));
 
     // Assemble digital output code
