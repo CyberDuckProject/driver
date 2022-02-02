@@ -105,21 +105,28 @@ f32 adc::read(u32 channel) const
 {
     assert(channel <= 7);
 
-    char buf[3] = {1, static_cast<char>((8 + channel) << 4), 0};
-    char read_buf[3];
-    PIGPIO_CALL(spiXfer(handle, buf, read_buf, 3));
+    // Single-ended channel selection
+    char tx[3] = {1, (8 + channel) << 4, 0};
+    char rx[3];
+    PIGPIO_CALL(spiXfer(handle, tx, rx, 3));
 
-    i32 value = ((read_buf[1] << 8) | read_buf[2]) & 0x3FF;
-    return static_cast<f32>(value) * vref / 1023.0f;
+    // Assemble digital output code
+    u32 code = (rx[1] << 8) | rx[2];
+    code &= 0x3FF;
+
+    // Calculate input voltage
+    return static_cast<f32>(code) * vref / 1023.0f;
 }
 
 bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
     pins{broadcom}, storage{new bme280_dev{}}
 {
+    // Open I2C bus 
     PIGPIO_CALL(gpioSetPullUpDown(pins.first, PI_PUD_UP));
     PIGPIO_CALL(gpioSetPullUpDown(pins.second, PI_PUD_UP));
     PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
 
+    // Initialize BME280 driver
     auto* dev = static_cast<bme280_dev*>(storage);
     dev->intf = BME280_I2C_INTF;
     dev->intf_ptr = &handle;
@@ -128,6 +135,7 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
     dev->delay_us = i2c_delay_us;
     BME280_CALL(bme280_init(dev));
 
+    // Configure sensor settings and mode
     // TODO: Choose operation mode from section 3.5 of
     // https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
     dev->settings.osr_h = BME280_OVERSAMPLING_1X;
