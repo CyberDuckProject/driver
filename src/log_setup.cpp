@@ -13,10 +13,10 @@ namespace expr = boost::log::expressions;
 
 namespace {
 
-class log
+class log_setup
 {
 public:
-    log()
+    log_setup()
     {
         init_syslog();
         init_stderr();
@@ -51,6 +51,6 @@ private:
                                  keywords::format = "[%TimeStamp%] [%Severity%] %Message%");
     }
 
-} log;
+} log_setup;
 
 } // namespace

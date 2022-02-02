@@ -7,7 +7,7 @@ add_executable(driver
     peripherals.cpp
     io.h
     io.cpp
-    log.cpp
+    log_setup.cpp
 )
 
 # Find dependencies
