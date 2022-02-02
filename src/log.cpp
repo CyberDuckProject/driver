@@ -1,7 +1,6 @@
-#include "log.h"
-
 #include <boost/log/expressions.hpp>
 #include <boost/log/support/date_time.hpp>
+#include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup.hpp>
 #define BOOST_LOG_USE_NATIVE_SYSLOG
 #include <boost/log/sinks.hpp>

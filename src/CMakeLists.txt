@@ -7,7 +7,6 @@ add_executable(driver
     peripherals.cpp
     io.h
     io.cpp
-    log.h
     log.cpp
 )
 
