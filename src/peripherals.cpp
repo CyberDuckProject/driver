@@ -88,12 +88,12 @@ f32 motor::speed() const
     return static_cast<f32>(us - 1000) / 1000.0f;
 }
 
-adc::adc(bool aux, u32 channel, f32 vref) : vref{vref}
+mcp3008::mcp3008(bool aux, u32 channel, f32 vref) : vref{vref}
 {
     PIGPIO_CALL(handle = spiOpen(channel, 1000000, PI_SPI_FLAGS_AUX_SPI(aux)));
 }
 
-adc::~adc()
+mcp3008::~mcp3008()
 {
     if (handle >= 0)
     {
@@ -101,7 +101,7 @@ adc::~adc()
     }
 }
 
-f32 adc::read(u32 channel) const
+f32 mcp3008::read(u32 channel) const
 {
     assert(channel <= 7);
 

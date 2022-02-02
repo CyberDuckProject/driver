@@ -17,11 +17,11 @@ private:
     u32 pin;
 };
 
-class adc
+class mcp3008
 {
 public:
-    adc(bool aux, u32 channel, f32 vref);
-    ~adc();
+    mcp3008(bool aux, u32 channel, f32 vref);
+    ~mcp3008();
 
     f32 read(u32 channel) const;
 

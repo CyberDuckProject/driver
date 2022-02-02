@@ -23,7 +23,7 @@ private:
     motor right{12};
     output_pin eyes{6};
     output_pin fan{7};
-    ::adc adc{false, 0, 3.3f};
+    mcp3008 adc{false, 0, 3.3f};
     ::bme280 bme280{22, 0x76, {19, 21}};
 };
 
