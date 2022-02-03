@@ -120,21 +120,22 @@ f32 mcp3008::read(u32 channel) const
 }
 
 bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
-    pins{broadcom}, storage{new bme280_dev{}}
+    pins{broadcom}, dev{std::make_unique<bme280_dev>()}
 {
-    // Open I2C bus 
+    // Enable pull-ups on I2C pins
     PIGPIO_CALL(gpioSetPullUpDown(pins.first, PI_PUD_UP));
     PIGPIO_CALL(gpioSetPullUpDown(pins.second, PI_PUD_UP));
+    
+    // Open I2C bus
     PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
 
     // Initialize BME280 driver
-    auto* dev = static_cast<bme280_dev*>(storage);
     dev->intf = BME280_I2C_INTF;
     dev->intf_ptr = &handle;
     dev->read = i2c_read;
     dev->write = i2c_write;
     dev->delay_us = i2c_delay_us;
-    BME280_CALL(bme280_init(dev));
+    BME280_CALL(bme280_init(dev.get()));
 
     // Configure sensor settings and mode
     // TODO: Choose operation mode from section 3.5 of
@@ -149,30 +150,27 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
     settings_sel |= BME280_OSR_HUM_SEL;
     settings_sel |= BME280_STANDBY_SEL;
     settings_sel |= BME280_FILTER_SEL;
-    BME280_CALL(bme280_set_sensor_settings(settings_sel, dev));
-    BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev));
+    BME280_CALL(bme280_set_sensor_settings(settings_sel, dev.get()));
+    BME280_CALL(bme280_set_sensor_mode(BME280_NORMAL_MODE, dev.get()));
 }
 
 bme280::~bme280()
 {
+    // Close I2C bus
     if (handle >= 0)
     {
         i2cClose(handle);
     }
 
+    // Reset pull-ups on I2C pins
     gpioSetPullUpDown(pins.first, PI_PUD_OFF);
     gpioSetPullUpDown(pins.second, PI_PUD_OFF);
-
-    if (storage)
-    {
-        delete static_cast<bme280_dev*>(storage);
-    }
 }
 
 bme280_readout bme280::read() const
 {
     bme280_data data;
-    BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, static_cast<bme280_dev*>(storage)));
+    BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, dev.get()));
 
     bme280_readout result;
     result.humidity = data.humidity;
