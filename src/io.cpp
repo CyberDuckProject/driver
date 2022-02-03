@@ -8,20 +8,40 @@ void io::set_left_motor(f32 speed)
     left.set_speed(speed);
 }
 
+f32 io::left_motor() const
+{
+    return left.speed();
+}
+
 void io::set_right_motor(f32 speed)
 {
     assert(speed >= 0.0f && speed <= 1.0f);
     right.set_speed(speed);
 }
 
+f32 io::right_motor() const
+{
+    return right.speed();
+}
+
 void io::set_eyes(bool on)
 {
-    eyes.set_value(on);
+    eyes_pin.set_value(on);
+}
+
+bool io::eyes() const
+{
+    return eyes_pin.value();
 }
 
 void io::set_fan(bool on)
 {
-    fan.set_value(on);
+    fan_pin.set_value(on);
+}
+
+bool io::fan() const
+{
+    return fan_pin.value();
 }
 
 f32 io::temperature() const
