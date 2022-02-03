@@ -18,7 +18,11 @@ public:
         init_syslog();
         init_stderr();
         logging::add_common_attributes();
+#ifndef NDEBUG
         logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::debug);
+#else
+        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
+#endif
     }
 
 private:
