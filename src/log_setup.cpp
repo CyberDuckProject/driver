@@ -1,5 +1,3 @@
-#include <boost/log/expressions.hpp>
-#include <boost/log/support/date_time.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup.hpp>
 #define BOOST_LOG_USE_NATIVE_SYSLOG
@@ -9,7 +7,6 @@ namespace logging = boost::log;
 namespace sinks = boost::log::sinks;
 namespace syslog = boost::log::sinks::syslog;
 namespace keywords = boost::log::keywords;
-namespace expr = boost::log::expressions;
 
 namespace {
 
