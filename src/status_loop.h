@@ -10,7 +10,7 @@ class status_loop
 {
 public:
     status_loop(executor_type& ctx, io& io, std::chrono::milliseconds period) :
-        timer{ctx}, socket{ctx}, io{io}, period{period}
+        timer{ctx, period}, socket{ctx}, io{io}, period{period}
     {
         timer.async_wait(boost::bind(&status_loop::loop, this));
     }
@@ -46,7 +46,7 @@ private:
         {
             io.set_eyes(!io.eyes());
         }
-
+        
         timer.expires_at(timer.expiry() + period);
         timer.async_wait(boost::bind(&status_loop::loop, this));
     }
