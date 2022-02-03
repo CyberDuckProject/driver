@@ -140,8 +140,6 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
     BME280_CALL(bme280_init(dev.get()));
 
     // Configure sensor settings and mode
-    // TODO: Choose operation mode from section 3.5 of
-    // https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
     dev->settings.osr_h = BME280_OVERSAMPLING_1X;
     dev->settings.osr_p = BME280_OVERSAMPLING_16X;
     dev->settings.osr_t = BME280_OVERSAMPLING_2X;
