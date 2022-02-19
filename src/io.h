@@ -21,6 +21,7 @@ public:
     f32 temperature() const;
     f32 turbidity() const;
     f32 dust() const;
+    f32 battery_voltage() const;
 
     bme280_readout weather() const;
 

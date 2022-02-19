@@ -56,6 +56,12 @@ f32 io::turbidity() const
     return -2572.2 * x * x + 8700.5 * x - 4352.9;
 }
 
+f32 io::battery_voltage() const
+{
+    f32 scale = 23870.0f / (23870.0f + 66750.0f);
+    return adc.read(3) / scale;
+}
+
 bme280_readout io::weather() const
 {
     return bme280.read();
