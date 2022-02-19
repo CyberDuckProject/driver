@@ -44,6 +44,16 @@ bool io::fan() const
     return fan_pin.value();
 }
 
+void io::set_heartbeat(bool on)
+{
+    heartbeat_pin.set_value(on);
+}
+
+bool io::heartbeat() const
+{
+    return heartbeat_pin.value();
+}
+
 f32 io::temperature() const
 {
     return (adc.read(0) - 0.5f) * 100.0f;

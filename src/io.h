@@ -18,6 +18,9 @@ public:
     void set_fan(bool on);
     bool fan() const;
 
+    void set_heartbeat(bool on);
+    bool heartbeat() const;
+
     f32 temperature() const;
     f32 turbidity() const;
     f32 dust() const;
@@ -30,6 +33,7 @@ private:
     motor right{12};
     output_pin eyes_pin{6};
     output_pin fan_pin{7};
+    output_pin heartbeat_pin{4};
     mcp3008 adc{false, 0, 3.3f};
     ::bme280 bme280{22, 0x76, {19, 21}};
 };
