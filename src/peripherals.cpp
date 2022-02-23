@@ -193,11 +193,10 @@ output_pin::~output_pin()
 void output_pin::set_value(bool on)
 {
     PIGPIO_CALL(gpioWrite(pin, on));
+    state = on;
 }
 
 bool output_pin::value() const
 {
-    i32 on;
-    PIGPIO_CALL(on = gpioRead(pin));
-    return on;
+    return state;
 }

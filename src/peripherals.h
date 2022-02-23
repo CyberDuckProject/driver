@@ -64,6 +64,7 @@ public:
 
 private:
     u32 pin;
+    bool state;
 };
 
 #endif
