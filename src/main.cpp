@@ -9,7 +9,7 @@ void guarded_main()
     io io;
 
     BOOST_LOG_TRIVIAL(info) << "initializing thread pool";
-    asio::thread_pool ctx;
+    asio::thread_pool ctx{4};
     
     // Handle exit signals
     asio::signal_set signals{ctx, SIGINT, SIGTERM};
