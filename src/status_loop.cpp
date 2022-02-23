@@ -18,6 +18,12 @@ void status_loop::connect(const udp::endpoint& endpoint)
     remote = endpoint;
 }
 
+void status_loop::disconnect()
+{
+    std::lock_guard lock{mutex};
+    remote.reset();
+}
+
 void status_loop::wait_handler()
 {
     std::lock_guard lock{mutex};

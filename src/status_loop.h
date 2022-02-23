@@ -11,6 +11,7 @@ public:
     status_loop(boost::asio::thread_pool& ctx, io& io, std::chrono::milliseconds period);
 
     void connect(const boost::asio::ip::udp::endpoint& endpoint);
+    void disconnect();
 
 private:
     void wait_handler();
