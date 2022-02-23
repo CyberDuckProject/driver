@@ -9,6 +9,7 @@ add_executable(driver
     io.cpp
     log_setup.cpp
     status_loop.h
+    status_loop.cpp
 )
 
 # Find dependencies
