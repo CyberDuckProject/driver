@@ -14,12 +14,7 @@ void guarded_main()
     // Handle exit signals
     asio::signal_set signals{ctx, SIGINT, SIGTERM};
     signals.async_wait([&](const boost::system::error_code& ec, i32 sig) {
-        if (ec)
-        {
-            throw boost::system::system_error{ec};
-        }
-        assert(sig == SIGINT || sig == SIGTERM);
-        BOOST_LOG_TRIVIAL(debug) << "received signal " << sig << ", exiting";
+        BOOST_LOG_TRIVIAL(debug) << "received signal " << sig;
         ctx.stop();
     });
 
