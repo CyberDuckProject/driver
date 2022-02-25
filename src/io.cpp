@@ -80,6 +80,7 @@ f32 io::dust()
         dust_pin.set_value(true);
         usleep(280);
         f32 voltage = adc.read(2) / scale;
+        dust_pin.set_value(false);
 
         // Add to average if measurement is valid
         voltage -= 0.6f;
