@@ -23,7 +23,7 @@ public:
 
     f32 temperature() const;
     f32 turbidity() const;
-    f32 dust() const;
+    f32 dust();
     f32 battery_voltage() const;
 
     bme280_readout weather() const;
@@ -34,6 +34,7 @@ private:
     output_pin eyes_pin{6};
     output_pin fan_pin{7};
     output_pin heartbeat_pin{4};
+    output_pin dust_pin{5};
     mcp3008 adc{false, 0, 3.3f};
     ::bme280 bme280{22, 0x76, {19, 21}};
 };

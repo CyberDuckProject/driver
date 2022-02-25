@@ -1,6 +1,8 @@
 #include "io.h"
 
+#include <boost/log/trivial.hpp>
 #include <cassert>
+#include <unistd.h>
 
 void io::set_left_motor(f32 speed)
 {
@@ -66,9 +68,40 @@ f32 io::turbidity() const
     return -2572.2 * x * x + 8700.5 * x - 4352.9;
 }
 
+f32 io::dust()
+{
+    f32 scale = 18000.0f / (33000.0f + 18000.0f);
+    f32 sum = 0;
+    u32 count = 0;
+
+    for (u32 i = 0; i < 10; ++i)
+    {
+        // Flash IR and read voltage
+        dust_pin.set_value(true);
+        usleep(280);
+        f32 voltage = adc.read(2) / scale;
+
+        // Add to average if measurement is valid
+        voltage -= 0.6f;
+        if (voltage > 0)
+        {
+            ++count;
+            sum += voltage * 200.0f;
+        }
+    }
+
+    if (count == 0)
+    {
+        BOOST_LOG_TRIVIAL(warning) << "measured no dust after 10 iterations";
+        return 0.0f;
+    }
+
+    return sum / static_cast<f32>(count);
+}
+
 f32 io::battery_voltage() const
 {
-    f32 scale = 23870.0f / (23870.0f + 66750.0f);
+    f32 scale = 23.870f / (23.870f + 66.750f);
     return adc.read(3) / scale;
 }
 
