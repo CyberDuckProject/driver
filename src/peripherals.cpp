@@ -103,7 +103,7 @@ mcp3008::~mcp3008()
     }
 }
 
-f32 mcp3008::read(u32 channel) const
+f32 mcp3008::read(u32 channel)
 {
     assert(channel <= 7);
 
@@ -167,7 +167,7 @@ bme280::~bme280()
     gpioSetPullUpDown(pins.second, PI_PUD_OFF);
 }
 
-bme280_readout bme280::read() const
+bme280_readout bme280::read()
 {
     bme280_data data;
     BME280_CALL(bme280_get_sensor_data(BME280_ALL, &data, dev.get()));

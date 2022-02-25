@@ -56,12 +56,12 @@ bool io::heartbeat() const
     return !heartbeat_pin.value();
 }
 
-f32 io::temperature() const
+f32 io::temperature()
 {
     return (adc.read(0) - 0.5f) * 100.0f;
 }
 
-f32 io::turbidity() const
+f32 io::turbidity()
 {
     // https://forum.arduino.cc/t/getting-the-quantified-ntu-of-turbidity-sensor-sku-sen0189/701459/3
     f32 x = adc.read(1);
@@ -99,13 +99,13 @@ f32 io::dust()
     return sum / static_cast<f32>(count);
 }
 
-f32 io::battery_voltage() const
+f32 io::battery_voltage()
 {
     f32 scale = 23.870f / (23.870f + 66.750f);
     return adc.read(3) / scale;
 }
 
-bme280_readout io::weather() const
+bme280_readout io::weather()
 {
     return bme280.read();
 }

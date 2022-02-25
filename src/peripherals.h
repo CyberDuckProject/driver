@@ -23,7 +23,7 @@ public:
     mcp3008(bool aux, u32 channel, f32 vref);
     ~mcp3008();
 
-    f32 read(u32 channel) const;
+    f32 read(u32 channel);
 
 private:
     f32 vref;
@@ -45,7 +45,7 @@ public:
     bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom);
     ~bme280();
 
-    bme280_readout read() const;
+    bme280_readout read();
 
 private:
     std::pair<u32, u32> pins;

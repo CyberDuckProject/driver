@@ -21,12 +21,12 @@ public:
     void set_heartbeat(bool on);
     bool heartbeat() const;
 
-    f32 temperature() const;
-    f32 turbidity() const;
+    f32 temperature();
+    f32 turbidity();
     f32 dust();
-    f32 battery_voltage() const;
+    f32 battery_voltage();
 
-    bme280_readout weather() const;
+    bme280_readout weather();
 
 private:
     motor left{13};
