@@ -46,5 +46,28 @@ void status_loop::wait_handler()
 
 void status_loop::loop()
 {
-    // TODO: send data
+    struct message
+    {
+        f32 water_temperature;
+        f32 turbidity;
+        f32 dust;
+        f32 battery_voltage;
+        f32 pressure;
+        f32 temperature;
+        f32 humidity;
+    };
+
+    message msg;
+    msg.water_temperature = io.temperature();
+    msg.turbidity = io.turbidity();
+    msg.dust = io.dust();
+    msg.battery_voltage = io.battery_voltage();
+
+    bme280_readout weather = io.weather();
+    msg.pressure = weather.pressure;
+    msg.temperature = weather.temperature;
+    msg.humidity = weather.humidity;
+
+    assert(remote.has_value());
+    socket.async_send_to(asio::buffer(&msg, sizeof(msg)), *remote, [](...) {});
 }
