@@ -7,7 +7,6 @@ add_executable(driver
     peripherals.cpp
     io.h
     io.cpp
-    log_setup.cpp
     status_loop.h
     status_loop.cpp
 )
@@ -15,13 +14,13 @@ add_executable(driver
 # Find dependencies
 find_package(pigpio REQUIRED)
 find_package(Boost REQUIRED
-    thread system log log_setup
+    thread system log
 )
 
 # Link against libraries
 target_link_libraries(driver PRIVATE
     pigpio::pigpio
-    Boost::thread Boost::system Boost::log Boost::log_setup
+    Boost::thread Boost::system Boost::log
     third_party::BME280
 )
 
