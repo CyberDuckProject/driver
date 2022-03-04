@@ -38,12 +38,12 @@ bool io::eyes() const
 
 void io::set_fan(bool on)
 {
-    fan_pin.set_value(!on);
+    fan_pin.set_value(on);
 }
 
 bool io::fan() const
 {
-    return !fan_pin.value();
+    return fan_pin.value();
 }
 
 void io::set_heartbeat(bool on)
