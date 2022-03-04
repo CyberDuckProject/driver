@@ -21,10 +21,14 @@ void guarded_main()
     BOOST_LOG_TRIVIAL(info) << "initializing server";
     status_loop status{ctx, io, std::chrono::seconds{1}};
 
+    asio::ip::udp::resolver resolver{ctx};
+    auto endpoint = *resolver.resolve("192.168.0.1", "1333");
+    status.connect(endpoint);
+
     ctx.join();
 }
 
-int main()
+i32 main()
 {
     try
     {
