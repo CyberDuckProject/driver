@@ -2,6 +2,7 @@
 
 #include "peripheral_error.h"
 #include <bme280.h>
+#include <boost/log/trivial.hpp>
 #include <cassert>
 #include <pigpio.h>
 #include <unistd.h>
@@ -36,7 +37,10 @@ public:
         gpioCfgInterfaces(PI_DISABLE_FIFO_IF | PI_DISABLE_SOCK_IF | PI_LOCALHOST_SOCK_IF);
         // Disable printing
         gpioCfgSetInternals(gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER);
-        gpioInitialise();
+        if (gpioInitialise() < 0)
+        {
+            BOOST_LOG_TRIVIAL(error) << "failed to initialize pigpio";
+        }
     }
 
     ~pigpio()
@@ -127,7 +131,7 @@ bme280::bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom) :
     // Enable pull-ups on I2C pins
     PIGPIO_CALL(gpioSetPullUpDown(pins.first, PI_PUD_UP));
     PIGPIO_CALL(gpioSetPullUpDown(pins.second, PI_PUD_UP));
-    
+
     // Open I2C bus
     PIGPIO_CALL(handle = i2cOpen(bus, address, 0));
 
