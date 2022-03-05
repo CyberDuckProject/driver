@@ -1,55 +1,27 @@
 #include "peripherals.h"
 
-#include "peripheral_error.h"
+#include "peripherals_detail.h"
 #include <bme280.h>
-#include <boost/log/trivial.hpp>
 #include <cassert>
 #include <pigpio.h>
 #include <unistd.h>
 
-#define PIGPIO_CALL(call)                                                                          \
+#define CALL(x, cat)                                                                              \
     do                                                                                             \
     {                                                                                              \
-        if (i32 code = (call); code < 0)                                                           \
+        if (auto ec = ::peripherals::detail::make_##cat##_error(x); ec.value() < 0)                \
         {                                                                                          \
-            throw ::peripheral_error{code, false};                                                 \
+            throw std::system_error{ec};                                                           \
         }                                                                                          \
     }                                                                                              \
     while (false)
-#define BME280_CALL(call)                                                                          \
-    do                                                                                             \
-    {                                                                                              \
-        if (i32 code = (call); code < 0)                                                           \
-        {                                                                                          \
-            throw ::peripheral_error{code, true};                                                  \
-        }                                                                                          \
-    }                                                                                              \
-    while (false)
+#define PIGPIO_CALL(x) CALL(x, gpio)
+#define BME280_CALL(x) CALL(x, bme280)
 
+namespace peripherals {
 namespace {
 
-class pigpio
-{
-public:
-    pigpio()
-    {
-        // Disable unused interfaces
-        gpioCfgInterfaces(PI_DISABLE_FIFO_IF | PI_DISABLE_SOCK_IF | PI_LOCALHOST_SOCK_IF);
-        // Disable printing
-        gpioCfgSetInternals(gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER);
-        if (gpioInitialise() < 0)
-        {
-            BOOST_LOG_TRIVIAL(error) << "failed to initialize pigpio";
-        }
-    }
-
-    ~pigpio()
-    {
-        gpioTerminate();
-    }
-} pigpio;
-
-void i2c_delay_us(u32 period, void* intf_ptr)
+void i2c_delay_us(u32 period, void*)
 {
     usleep(period);
 }
@@ -65,7 +37,7 @@ i8 i2c_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
     assert(intf_ptr);
     i32 handle = *static_cast<i32*>(intf_ptr);
-    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len);
+    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) > 0 ? 0 : -1;
 }
 
 } // namespace
@@ -183,10 +155,10 @@ bme280_readout bme280::read()
     return result;
 }
 
-output_pin::output_pin(u32 broadcom) : pin{broadcom}
+output_pin::output_pin(u32 broadcom, bool on) : pin{broadcom}
 {
     PIGPIO_CALL(gpioSetMode(pin, PI_OUTPUT));
-    set_value(false);
+    set_value(on);
 }
 
 output_pin::~output_pin()
@@ -204,3 +176,5 @@ bool output_pin::value() const
 {
     return state;
 }
+
+} // namespace peripherals

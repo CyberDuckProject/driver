@@ -26,17 +26,17 @@ public:
     f32 dust();
     f32 battery_voltage();
 
-    bme280_readout weather();
+    peripherals::bme280_readout weather();
 
 private:
-    motor left{13};
-    motor right{12};
-    output_pin eyes_pin{6};
-    output_pin fan_pin{7};
-    output_pin heartbeat_pin{4};
-    output_pin dust_pin{5};
-    mcp3008 adc{false, 0, 3.3f};
-    ::bme280 bme280{22, 0x76, {19, 21}};
+    peripherals::motor left{13};
+    peripherals::motor right{12};
+    peripherals::output_pin eyes_pin{6};
+    peripherals::output_pin fan_pin{7};
+    peripherals::output_pin heartbeat_pin{4};
+    peripherals::output_pin dust_pin{5};
+    peripherals::mcp3008 adc{false, 0, 3.3f};
+    peripherals::bme280 bme280{22, 0x76, {19, 21}};
 };
 
 #endif

@@ -1,23 +1,22 @@
-#include "peripheral_error.h"
+#include "peripherals_detail.h"
 
 #include <bme280.h>
 #include <pigpio.h>
 
-#define BME280_CODE(x) (-200 + (x))
-
+namespace peripherals::detail {
 namespace {
 
-class peripheral_category : public std::error_category
+class gpio_category : public std::error_category
 {
 public:
-    const char* name() const noexcept override
+    [[nodiscard]] const char* name() const noexcept override
     {
-        return "peripheral";
+        return "gpio";
     }
 
-    std::string message(i32 condition) const override
+    [[nodiscard]] std::string message(i32 condition) const override
     {
-        // Error messages taken from pigpio.h
+        // Source: pigpio.h
         switch (condition)
         {
         case PI_INIT_FAILED:
@@ -308,28 +307,77 @@ public:
             return "not available on BCM2711";
         case PI_ONLY_ON_BCM2711:
             return "only available on BCM2711";
-        case BME280_CODE(BME280_E_NULL_PTR):
-            return "null pointer error";
-        case BME280_CODE(BME280_E_DEV_NOT_FOUND):
-            return "device not found";
-        case BME280_CODE(BME280_E_INVALID_LEN):
-            return "invalid length";
-        case BME280_CODE(BME280_E_COMM_FAIL):
-            return "communication fail";
-        case BME280_CODE(BME280_E_SLEEP_MODE_FAIL):
-            return "sleep mode fail";
-        case BME280_CODE(BME280_E_NVM_COPY_FAILED):
-            return "NVM copy failed";
         default:
             return "unknown error";
         }
     }
-} peripheral_category;
+} gpio_category;
+
+class bme280_category : public std::error_category
+{
+public:
+    [[nodiscard]] const char* name() const noexcept override
+    {
+        return "bme280";
+    }
+
+    [[nodiscard]] std::string message(i32 condition) const override
+    {
+        // Source: bme280.h
+        switch (condition)
+        {
+        case BME280_E_NULL_PTR:
+            return "BME280_E_NULL_PTR";
+        case BME280_E_DEV_NOT_FOUND:
+            return "BME280_E_DEV_NOT_FOUND";
+        case BME280_E_INVALID_LEN:
+            return "BME280_E_INVALID_LEN";
+        case BME280_E_COMM_FAIL:
+            return "BME280_E_COMM_FAIL";
+        case BME280_E_SLEEP_MODE_FAIL:
+            return "BME280_E_SLEEP_MODE_FAIL";
+        case BME280_E_NVM_COPY_FAILED:
+            return "BME280_E_NVM_COPY_FAILED";
+        default:
+            return "unknown error";
+        }
+    }
+} bme280_category;
 
 } // namespace
 
-peripheral_error::peripheral_error(i32 error_code, bool bme280) :
-    std::system_error{
-        std::error_code{bme280 ? BME280_CODE(error_code) : error_code, peripheral_category}}
+u32 obj_counter::count{0};
+
+obj_counter::obj_counter()
 {
+    if (count++ == 0)
+    {
+        gpioCfgInterfaces(PI_DISABLE_FIFO_IF | PI_DISABLE_SOCK_IF | PI_LOCALHOST_SOCK_IF);
+        gpioCfgSetInternals(gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER); // Disable printing
+        auto ec = make_gpio_error(gpioInitialise());
+        if (ec.value() < 0)
+        {
+            throw std::system_error{ec};
+        }
+    }
 }
+
+obj_counter::~obj_counter()
+{
+    if (--count == 0)
+    {
+        gpioTerminate();
+    }
+}
+
+std::error_code make_gpio_error(i32 ec)
+{
+    return std::error_code{ec, gpio_category};
+};
+
+std::error_code make_bme280_error(i32 ec)
+{
+    return std::error_code{ec, bme280_category};
+}
+
+} // namespace peripherals::detail

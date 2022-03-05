@@ -1,8 +1,8 @@
 add_executable(driver
     main.cpp
     fundamental_types.h
-    peripheral_error.h
-    peripheral_error.cpp
+    peripherals_detail.h
+    peripherals_detail.cpp
     peripherals.h
     peripherals.cpp
     io.h

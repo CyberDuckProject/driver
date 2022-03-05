@@ -1,7 +1,6 @@
 #include "status_loop.h"
 
 #include <boost/bind/bind.hpp>
-#include <boost/log/trivial.hpp>
 
 namespace asio = boost::asio;
 using udp = asio::ip::udp;
@@ -63,7 +62,7 @@ void status_loop::loop()
     msg.dust = io.dust();
     msg.battery_voltage = io.battery_voltage();
 
-    bme280_readout weather = io.weather();
+    peripherals::bme280_readout weather = io.weather();
     msg.pressure = weather.pressure;
     msg.temperature = weather.temperature;
     msg.humidity = weather.humidity;
