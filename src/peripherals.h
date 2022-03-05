@@ -26,7 +26,7 @@ public:
     mcp3008(bool aux, u32 channel, f32 vref);
     ~mcp3008();
 
-    [[nodiscard]] f32 read(u32 channel);
+    [[nodiscard]] f32 read(u32 channel) const;
 
 private:
     f32 vref;

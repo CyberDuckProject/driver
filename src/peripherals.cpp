@@ -79,7 +79,7 @@ mcp3008::~mcp3008()
     }
 }
 
-f32 mcp3008::read(u32 channel)
+f32 mcp3008::read(u32 channel) const
 {
     assert(channel <= 7);
 
