@@ -31,7 +31,11 @@ if (NOT ${MOCK_MODE})
     )
     target_include_directories(driver PRIVATE normal)
 else()
-    message(FATAL_ERROR "Not yet implemented")
+    target_sources(driver PRIVATE
+        mock/io_base.h
+        mock/io.cpp
+    )
+    target_include_directories(driver PRIVATE mock)
 endif()
 
 # Link against Boost
