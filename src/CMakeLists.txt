@@ -12,17 +12,30 @@ add_executable(driver
 )
 
 # Find dependencies
-find_package(pigpio REQUIRED)
+find_package(pigpio)
 find_package(Boost REQUIRED
     thread system log
 )
 
-# Link against libraries
+# Enable mock mode if pigpio not found
+if (NOT ${pigpio_FOUND})
+    set(MOCK_MODE ON)
+else()
+    set(MOCK_MODE OFF)
+endif()
+
+# Link against Boost
 target_link_libraries(driver PRIVATE
-    pigpio::pigpio
     Boost::thread Boost::system Boost::log
-    third_party::BME280
 )
+
+# Link against sensor libraries if not in mock mode
+if (NOT ${MOCK_MODE})
+    target_link_libraries(driver PRIVATE
+        pigpio::pigpio
+        third_party::BME280
+    )
+endif()
 
 # Compile definitions
 target_compile_definitions(driver PRIVATE BOOST_LOG_DYN_LINK)
