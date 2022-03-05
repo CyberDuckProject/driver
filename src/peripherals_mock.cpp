@@ -78,9 +78,9 @@ bme280_readout bme280::read()
     return result;
 }
 
-output_pin::output_pin(u32, bool)
+output_pin::output_pin(u32, bool on)
 {
-    set_value(false);
+    set_value(on);
 }
 
 output_pin::~output_pin()
