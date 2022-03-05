@@ -6,6 +6,9 @@ project(driver
     LANGUAGES C CXX
 )
 
+# Project options
+option(MOCK_PERIPHERALS "Mock peripherals" OFF)
+
 # Custom find modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
