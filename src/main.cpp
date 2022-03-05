@@ -1,8 +1,6 @@
 #include "status_loop.h"
 #include <boost/log/trivial.hpp>
 
-namespace asio = boost::asio;
-
 void guarded_main()
 {
     BOOST_LOG_TRIVIAL(info) << "initializing I/O";
