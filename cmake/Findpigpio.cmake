@@ -6,15 +6,17 @@ find_library(pigpio_LIBRARY
     NAMES libpigpio.so
 )
 
-# Retrieve version number from header
-file(STRINGS
-    ${pigpio_INCLUDE_DIR}/pigpio.h pigpio_VERSION_MACRO
-    REGEX "#define PIGPIO_VERSION [0-9]+"
-)
-string(REGEX
-    MATCH "[0-9]+"
-    pigpio_VERSION ${pigpio_VERSION_MACRO}
-)
+if(pigpio_FOUND)
+    # Retrieve version number from header
+    file(STRINGS
+        ${pigpio_INCLUDE_DIR}/pigpio.h pigpio_VERSION_MACRO
+        REGEX "#define PIGPIO_VERSION [0-9]+"
+    )
+    string(REGEX
+        MATCH "[0-9]+"
+        pigpio_VERSION ${pigpio_VERSION_MACRO}
+    )
+endif()
 
 # Handle find_package settings
 include(FindPackageHandleStandardArgs)
