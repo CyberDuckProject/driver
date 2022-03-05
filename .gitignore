@@ -2,6 +2,9 @@
 .idea/
 .vscode/
 
+# Clangd server cache
+.cache/
+
 # CMake build directories
 cmake-build-*/
 build/
