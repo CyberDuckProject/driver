@@ -346,9 +346,9 @@ public:
 
 } // namespace
 
-u32 obj_counter::count{0};
+u32 base::count{0};
 
-obj_counter::obj_counter()
+base::base()
 {
     if (count++ == 0)
     {
@@ -362,7 +362,7 @@ obj_counter::obj_counter()
     }
 }
 
-obj_counter::~obj_counter()
+base::~base()
 {
     if (--count == 0)
     {

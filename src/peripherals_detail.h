@@ -5,11 +5,11 @@
 
 namespace peripherals::detail {
 
-class obj_counter
+class base
 {
 protected:
-    obj_counter();
-    ~obj_counter();
+    base();
+    ~base();
 
 private:
     static u32 count;

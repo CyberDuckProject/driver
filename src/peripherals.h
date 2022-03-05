@@ -7,7 +7,7 @@ struct bme280_dev;
 
 namespace peripherals {
 
-class motor : detail::obj_counter
+class motor : detail::base
 {
 public:
     explicit motor(u32 broadcom);
@@ -20,7 +20,7 @@ private:
     u32 pin;
 };
 
-class mcp3008 : detail::obj_counter
+class mcp3008 : detail::base
 {
 public:
     mcp3008(bool aux, u32 channel, f32 vref);
@@ -40,7 +40,7 @@ struct bme280_readout
     f32 humidity;
 };
 
-class bme280 : detail::obj_counter
+class bme280 : detail::base
 {
 public:
     bme280(u32 bus, u32 address, std::pair<u32, u32> broadcom);
@@ -54,7 +54,7 @@ private:
     i32 handle;
 };
 
-class output_pin : detail::obj_counter
+class output_pin : detail::base
 {
 public:
     explicit output_pin(u32 broadcom, bool on = false);
