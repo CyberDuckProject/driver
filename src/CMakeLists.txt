@@ -1,12 +1,6 @@
 add_executable(driver
     main.cpp
     fundamental_types.h
-    peripherals_detail.h
-    peripherals_detail.cpp
-    peripherals.h
-    peripherals.cpp
-    io.h
-    io.cpp
     status_loop.h
     status_loop.cpp
 )
@@ -22,6 +16,22 @@ if (NOT ${pigpio_FOUND})
     set(MOCK_MODE ON)
 else()
     set(MOCK_MODE OFF)
+endif()
+
+# Add implementation depending on mode
+target_include_directories(driver PRIVATE .)
+if (NOT ${MOCK_MODE})
+    target_sources(driver PRIVATE
+        normal/peripherals_detail.h
+        normal/peripherals_detail.cpp
+        normal/peripherals.h
+        normal/peripherals.cpp
+        normal/io_base.h
+        normal/io.cpp
+    )
+    target_include_directories(driver PRIVATE normal)
+else()
+    message(FATAL_ERROR "Not yet implemented")
 endif()
 
 # Link against Boost

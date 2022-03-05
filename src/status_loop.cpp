@@ -62,7 +62,7 @@ void status_loop::loop()
     msg.dust = io.dust();
     msg.battery_voltage = io.battery_voltage();
 
-    peripherals::bme280_readout weather = io.weather();
+    auto weather = io.weather();
     msg.pressure = weather.pressure;
     msg.temperature = weather.temperature;
     msg.humidity = weather.humidity;

@@ -1,9 +1,10 @@
 #ifndef IO_H
 #define IO_H
 
-#include "peripherals.h"
+#include "fundamental_types.h"
+#include "io_base.h"
 
-class io
+class io : private io_base
 {
 public:
     void set_left_motor(f32 speed);
@@ -26,17 +27,13 @@ public:
     f32 dust();
     f32 battery_voltage();
 
-    peripherals::bme280_readout weather();
-
-private:
-    peripherals::motor left{13};
-    peripherals::motor right{12};
-    peripherals::output_pin eyes_pin{6};
-    peripherals::output_pin fan_pin{7};
-    peripherals::output_pin heartbeat_pin{4};
-    peripherals::output_pin dust_pin{5};
-    peripherals::mcp3008 adc{false, 0, 3.3f};
-    peripherals::bme280 bme280{22, 0x76, {19, 21}};
+    struct weather_redout
+    {
+        f32 pressure;
+        f32 temperature;
+        f32 humidity;
+    };
+    weather_redout weather();
 };
 
 #endif

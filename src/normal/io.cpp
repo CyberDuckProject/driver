@@ -106,7 +106,12 @@ f32 io::battery_voltage()
     return adc.read(3) / scale;
 }
 
-peripherals::bme280_readout io::weather()
+io::weather_redout io::weather()
 {
-    return bme280.read();
+    const auto redout = bme280.read();
+    return {
+        redout.pressure,
+        redout.temperature,
+        redout.humidity
+    };
 }
