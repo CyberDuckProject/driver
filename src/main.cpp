@@ -22,9 +22,7 @@ void guarded_main()
     status_loop status{ctx, io, std::chrono::seconds{1}};
 
     // Temporary
-    asio::ip::udp::resolver resolver{ctx};
-    auto endpoint = *resolver.resolve("192.168.0.1", "1333");
-    status.connect(endpoint);
+    status.connect({asio::ip::address{}, 1666});
 
     ctx.join();
 }

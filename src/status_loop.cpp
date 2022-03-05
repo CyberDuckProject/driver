@@ -1,6 +1,7 @@
 #include "status_loop.h"
 
 #include <boost/bind/bind.hpp>
+#include <boost/log/trivial.hpp>
 
 namespace asio = boost::asio;
 using udp = asio::ip::udp;
@@ -8,6 +9,7 @@ using udp = asio::ip::udp;
 status_loop::status_loop(asio::thread_pool& ctx, ::io& io, std::chrono::milliseconds period) :
     io{io}, timer{ctx, period}, period{period}, socket{ctx, udp::v4()}
 {
+    socket.set_option(asio::socket_base::broadcast(true));
     timer.async_wait(boost::bind(&status_loop::wait_handler, this));
 }
 
@@ -68,5 +70,7 @@ void status_loop::loop()
     msg.humidity = weather.humidity;
 
     assert(remote.has_value());
-    socket.async_send_to(asio::buffer(&msg, sizeof(msg)), *remote, [](...) {});
+    socket.async_send_to(asio::buffer(&msg, sizeof(msg)), *remote, [](auto ec, int bytes) {
+        BOOST_LOG_TRIVIAL(info) << "sent " << bytes << " bytes";
+    });
 }
