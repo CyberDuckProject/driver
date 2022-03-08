@@ -1,5 +1,4 @@
-#ifndef STATUS_LOOP_H
-#define STATUS_LOOP_H
+#pragma once
 
 #include "io.h"
 #include <boost/asio.hpp>
@@ -24,5 +23,3 @@ private:
     std::optional<boost::asio::ip::udp::endpoint> remote;
     std::mutex mutex;
 };
-
-#endif
