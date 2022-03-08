@@ -1,14 +1,17 @@
-#ifndef IO_H
-#define IO_H
+#pragma once
 
 #include "peripherals.h"
 
 class io
 {
 public:
+    io();
+    ~io();
+    static io& get();
+
     void set_left_motor(f32 speed);
     f32 left_motor() const;
-    
+
     void set_right_motor(f32 speed);
     f32 right_motor() const;
 
@@ -38,5 +41,3 @@ private:
     peripherals::mcp3008 adc{false, 0, 3.3f};
     peripherals::bme280 bme280{22, 0x76, {19, 21}};
 };
-
-#endif

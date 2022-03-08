@@ -4,6 +4,29 @@
 #include <cassert>
 #include <unistd.h>
 
+namespace {
+
+io* singleton;
+
+} // namespace
+
+io::io()
+{
+    assert(!singleton);
+    singleton = this;
+}
+
+io::~io()
+{
+    singleton = nullptr;
+}
+
+io& io::get()
+{
+    assert(singleton);
+    return *singleton;
+}
+
 void io::set_left_motor(f32 speed)
 {
     assert(speed >= 0.0f && speed <= 1.0f);
