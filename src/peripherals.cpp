@@ -37,7 +37,7 @@ i8 i2c_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
 {
     assert(intf_ptr);
     i32 handle = *static_cast<i32*>(intf_ptr);
-    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) > 0 ? 0 : -1;
+    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len);
 }
 
 } // namespace
