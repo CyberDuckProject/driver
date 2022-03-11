@@ -86,9 +86,13 @@ f32 io::temperature()
 
 f32 io::turbidity()
 {
-    // https://forum.arduino.cc/t/getting-the-quantified-ntu-of-turbidity-sensor-sku-sen0189/701459/3
     f32 scale = 56000.0f / (33000.0f + 56000.0f);
     f32 x = adc.read(1) / scale;
+    if (x <= 2.5f)
+    {
+        BOOST_LOG_TRIVIAL(warning) << "turbidity value out of sensor range";
+        return 3000.0f;
+    }
     return -1120.4f * x * x + 5742.3f * x - 4352.9;
 }
 
