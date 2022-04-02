@@ -6,12 +6,6 @@ project(driver
     LANGUAGES C CXX
 )
 
-# Project options
-option(MOCK_PERIPHERALS "Mock peripherals" OFF)
-
-# Custom find modules
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
 # C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

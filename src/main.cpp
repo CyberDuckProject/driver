@@ -1,30 +1,27 @@
-#include "status_loop.h"
-#include <boost/log/trivial.hpp>
+#include "controller.h"
+#include "timed_loop.h"
+#include "transmitter.h"
 
 namespace asio = boost::asio;
 
 void guarded_main()
 {
-    BOOST_LOG_TRIVIAL(info) << "initializing IO";
-    io io;
-
-    BOOST_LOG_TRIVIAL(info) << "initializing thread pool";
+    io_driver drv;
     asio::thread_pool ctx{4};
 
-    // Handle exit signals
-    asio::signal_set signals{ctx, SIGINT, SIGTERM};
-    signals.async_wait([&](const boost::system::error_code& ec, i32 sig) {
-        BOOST_LOG_TRIVIAL(debug) << "received signal " << sig;
-        ctx.stop();
-    });
+    // Setup manual controls
+    controller ctrl{ctx, drv, 1333};
+    ctrl.listen();
 
-    BOOST_LOG_TRIVIAL(info) << "initializing server";
-    status_loop status{ctx, io, std::chrono::seconds{1}};
-
-    // Temporary
-    asio::ip::udp::resolver resolver{ctx};
-    auto endpoint = *resolver.resolve("192.168.0.1", "1333");
-    status.connect(endpoint);
+    // Setup sensor loop
+    transmitter tx{ctx, drv};
+    timed_loop loop{ctx, std::chrono::seconds{1}, [&]() {
+                        if (auto remote{ctrl.remote()}; remote)
+                        {
+                            tx.send_to(*remote);
+                        }
+                    }};
+    loop.run();
 
     ctx.join();
 }
@@ -34,12 +31,16 @@ i32 main()
     try
     {
         guarded_main();
+        return EXIT_SUCCESS;
     }
     catch (const std::exception& e)
     {
         BOOST_LOG_TRIVIAL(fatal) << e.what();
         return EXIT_FAILURE;
     }
-
-    return EXIT_SUCCESS;
+    catch (...)
+    {
+        BOOST_LOG_TRIVIAL(fatal) << "unknown error";
+        return EXIT_FAILURE;
+    }
 }

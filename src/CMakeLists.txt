@@ -1,27 +1,20 @@
 add_executable(driver
     main.cpp
-    fundamental_types.h
-    peripherals_detail.h
-    peripherals.h
-    io.h
-    io.cpp
-    status_loop.h
-    status_loop.cpp
+    common_headers.h
+    error_codes.h
+    error_codes.cpp
+    devices.h
+    devices.cpp
+    io_driver.h
+    io_driver.cpp
+    timed_loop.h
+    transmitter.h
+    transmitter.cpp
+    controller.h
+    controller.cpp
 )
 
-# Mock peripherals
-if (NOT MOCK_PERIPHERALS)
-    find_package(pigpio REQUIRED)
-    target_link_libraries(driver PRIVATE pigpio::pigpio)
-    target_sources(driver PRIVATE
-        peripherals.cpp
-        peripherals_detail.cpp
-    )
-else()
-    target_sources(driver PRIVATE peripherals_mock.cpp)
-endif()
-
-# Find dependencies
+# Find requried Boost components
 find_package(Boost REQUIRED
     thread system log
 )
@@ -29,7 +22,8 @@ find_package(Boost REQUIRED
 # Link against libraries
 target_link_libraries(driver PRIVATE
     Boost::thread Boost::system Boost::log
-    third_party::BME280
+    third_party::BME280_driver
+    third_party::pigpio
 )
 
 # Compile definitions
