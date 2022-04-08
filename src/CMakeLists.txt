@@ -7,11 +7,6 @@ add_executable(driver
     devices.cpp
     io_driver.h
     io_driver.cpp
-    timed_loop.h
-    transmitter.h
-    transmitter.cpp
-    controller.h
-    controller.cpp
 )
 
 # Find requried Boost components
