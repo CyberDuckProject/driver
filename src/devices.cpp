@@ -36,6 +36,7 @@ device::~device()
 {
     if (--count == 0)
     {
+        BOOST_LOG_TRIVIAL(debug) << "releasing " << PI_LOCKFILE;
         gpioTerminate();
     }
 }
