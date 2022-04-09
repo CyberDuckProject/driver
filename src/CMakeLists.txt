@@ -7,6 +7,8 @@ add_executable(driver
     devices.cpp
     io_driver.h
     io_driver.cpp
+    network.h
+    network.cpp
 )
 
 # Find requried Boost components
