@@ -12,7 +12,10 @@ void guarded_main()
     asio::thread_pool ctx{4};
 
     BOOST_LOG_TRIVIAL(info) << "registering signal handler";
-    signal_handler sighandler{ctx};
+    signal_handler sig_handler{ctx};
+
+    BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
+    connection_manager conn_mgr{ctx, 1333};
 
     ctx.join();
 }
