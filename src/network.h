@@ -1,9 +1,8 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include "common_headers.h"
+#include "messages.h"
 #include <boost/asio.hpp>
-#include <optional>
 
 class signal_handler
 {
@@ -12,12 +11,6 @@ public:
 
 private:
     boost::asio::signal_set signal_set;
-};
-
-struct control_message
-{
-    f64 left_motor;
-    f64 right_motor;
 };
 
 class connection_manager

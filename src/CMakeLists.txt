@@ -9,6 +9,7 @@ add_executable(driver
     io_driver.cpp
     network.h
     network.cpp
+    messages.h
 )
 
 # Find requried Boost components
