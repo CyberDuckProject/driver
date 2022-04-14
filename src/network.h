@@ -7,7 +7,7 @@
 class signal_handler
 {
 public:
-    signal_handler(boost::asio::thread_pool& ctx);
+    explicit signal_handler(boost::asio::thread_pool& ctx);
 
 private:
     boost::asio::signal_set signal_set;
