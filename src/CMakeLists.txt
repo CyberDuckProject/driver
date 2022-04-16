@@ -5,6 +5,8 @@ add_executable(driver
     dev/bme280.cpp
     dev/mcp3008.h
     dev/mcp3008.cpp
+    dev/esc.h
+    dev/esc.cpp
 )
 
 # Include directory
