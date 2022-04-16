@@ -1,10 +1,7 @@
-#ifndef COMMON_HEADERS_H
-#define COMMON_HEADERS_H
+#ifndef FUNDAMENTAL_TYPES_H
+#define FUNDAMENTAL_TYPES_H
 
-#include <boost/log/trivial.hpp>
-#include <cassert>
 #include <cstdint>
-#include <system_error>
 
 using i8 = std::int8_t;
 using i16 = std::int16_t;

@@ -1,16 +1,12 @@
 add_executable(driver
     main.cpp
-    common_headers.h
-    error_codes.h
-    error_codes.cpp
-    devices.h
-    devices.cpp
-    io_driver.h
-    io_driver.cpp
-    network.h
-    network.cpp
-    messages.h
+    fundamental_types.h
+    dev/bme280.h
+    dev/bme280.cpp
 )
+
+# Include directory
+target_include_directories(driver PRIVATE .)
 
 # Find requried Boost components
 find_package(Boost REQUIRED

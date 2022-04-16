@@ -1,23 +1,8 @@
-#include "io_driver.h"
-#include "network.h"
-
-namespace asio = boost::asio;
+#include "fundamental_types.h"
+#include <boost/log/trivial.hpp>
 
 void guarded_main()
 {
-    BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
-    // io_driver drv;
-
-    BOOST_LOG_TRIVIAL(info) << "starting 4 threads";
-    asio::thread_pool ctx{4};
-
-    BOOST_LOG_TRIVIAL(info) << "registering signal handler";
-    signal_handler sig_handler{ctx};
-
-    BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
-    connection_manager conn_mgr{ctx, 1333};
-
-    ctx.join();
 }
 
 i32 main()
