@@ -3,6 +3,8 @@ add_executable(driver
     fundamental_types.h
     dev/bme280.h
     dev/bme280.cpp
+    dev/mcp3008.h
+    dev/mcp3008.cpp
 )
 
 # Include directory
