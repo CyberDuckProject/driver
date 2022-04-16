@@ -7,6 +7,8 @@ add_executable(driver
     dev/mcp3008.cpp
     dev/esc.h
     dev/esc.cpp
+    dev/binary_pin.h
+    dev/binary_pin.cpp
 )
 
 # Include directory
