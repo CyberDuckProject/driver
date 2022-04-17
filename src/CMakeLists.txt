@@ -9,6 +9,8 @@ add_executable(driver
     dev/esc.cpp
     dev/binary_pin.h
     dev/binary_pin.cpp
+    dev/error_codes.h
+    dev/error_codes.cpp
 )
 
 # Include directory
