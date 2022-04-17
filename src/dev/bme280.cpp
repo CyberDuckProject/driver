@@ -6,40 +6,24 @@
 #include <unistd.h>
 
 namespace dev {
-namespace {
-
-i8 i2c_read(u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr)
-{
-    assert(intf_ptr);
-    i32 handle = *static_cast<i32*>(intf_ptr);
-    return i2cReadI2CBlockData(handle, reg_addr, (char*)reg_data, len) == len ? 0 : -1;
-}
-
-i8 i2c_write(u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr)
-{
-    assert(intf_ptr);
-    i32 handle = *static_cast<i32*>(intf_ptr);
-    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) == 0 ? 0 : -1;
-}
-
-void i2c_delay_us(u32 period, void*)
-{
-    usleep(period);
-}
-
-} // namespace
 
 bme280::bme280(u32 bus, u32 address)
 {
     // Open I2C bus
     handle = i2cOpen(bus, address, 0);
 
-    // Setup BME280 interface
+    // Setup BME280 interface and callbacks
     device.intf = BME280_I2C_INTF;
-    device.intf_ptr = &handle;
-    device.read = i2c_read;
-    device.write = i2c_write;
-    device.delay_us = i2c_delay_us;
+    device.intf_ptr = this;
+    device.read = [](u8 reg_addr, u8* reg_data, u32 len, void* intf_ptr) {
+        return static_cast<bme280*>(intf_ptr)->read(reg_addr, reg_data, len);
+    };
+    device.write = [](u8 reg_addr, const u8* reg_data, u32 len, void* intf_ptr) {
+        return static_cast<bme280*>(intf_ptr)->write(reg_addr, reg_data, len);
+    };
+    device.delay_us = [](u32 period, void*) {
+        usleep(period);
+    };
 
     // Initialize the device
     bme280_init(&device);
@@ -69,6 +53,16 @@ bme280_data bme280::get_sensor_data() const
     bme280_data data;
     bme280_get_sensor_data(BME280_ALL, &data, &device);
     return data;
+}
+
+i8 bme280::read(u8 reg_addr, u8* reg_data, u32 len)
+{
+    return i2cReadI2CBlockData(handle, reg_addr, (char*)reg_data, len) == len ? 0 : -1;
+}
+
+i8 bme280::write(u8 reg_addr, const u8* reg_data, u32 len)
+{
+    return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) == 0 ? 0 : -1;
 }
 
 } // namespace dev

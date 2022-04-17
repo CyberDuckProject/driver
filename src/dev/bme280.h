@@ -15,6 +15,9 @@ public:
     bme280_data get_sensor_data() const;
 
 private:
+    i8 read(u8 reg_addr, u8* reg_data, u32 len);
+    i8 write(u8 reg_addr, const u8* reg_data, u32 len);
+
     i32 handle;
     mutable bme280_dev device;
 };
