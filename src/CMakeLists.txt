@@ -11,6 +11,8 @@ add_executable(driver
     dev/binary_pin.cpp
     dev/error_codes.h
     dev/error_codes.cpp
+    core/io_driver.h
+    core/io_driver.cpp
 )
 
 # Include directory

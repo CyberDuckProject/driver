@@ -1,8 +1,10 @@
-#include "fundamental_types.h"
+#include "core/io_driver.h"
 #include <boost/log/trivial.hpp>
 
 void guarded_main()
 {
+    BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
+    core::io_driver drv;
 }
 
 i32 main()
