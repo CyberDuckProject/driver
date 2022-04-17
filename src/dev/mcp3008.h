@@ -1,7 +1,7 @@
 #ifndef DEV_MCP3008_H
 #define DEV_MCP3008_H
 
-#include "fundamental_types.h"
+#include "utl/fundamental_types.h"
 
 namespace dev {
 

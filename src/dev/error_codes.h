@@ -1,7 +1,7 @@
 #ifndef DEV_ERROR_CODES_H
 #define DEV_ERROR_CODES_H
 
-#include "fundamental_types.h"
+#include "utl/fundamental_types.h"
 #include <system_error>
 
 namespace dev {

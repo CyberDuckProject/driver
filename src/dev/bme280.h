@@ -1,7 +1,7 @@
 #ifndef DEV_BME280_H
 #define DEV_BME280_H
 
-#include "fundamental_types.h"
+#include "utl/fundamental_types.h"
 #include <bme280_defs.h>
 
 namespace dev {

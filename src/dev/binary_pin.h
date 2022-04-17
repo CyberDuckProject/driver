@@ -1,7 +1,7 @@
 #ifndef DEV_BINARY_PIN_H
 #define DEV_BINARY_PIN_H
 
-#include "fundamental_types.h"
+#include "utl/fundamental_types.h"
 
 namespace dev {
 
