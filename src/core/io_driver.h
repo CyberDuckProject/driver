@@ -6,22 +6,18 @@
 #include "dev/esc.h"
 #include "dev/mcp3008.h"
 
-namespace core {
-
 class io_driver
 {
 public:
 private:
-    dev::esc left{13};
-    dev::esc right{12};
-    dev::binary_pin heartbeat{4, true};
-    dev::binary_pin fan{7, true};
-    dev::binary_pin eyes{6, true};
-    dev::mcp3008 mcp3008{false, 0, 3.3};
-    mutable dev::binary_pin dust{5};
-    dev::bme280 bme280{22, 0x76};
+    esc left{13};
+    esc right{12};
+    binary_pin heartbeat{4, true};
+    binary_pin fan{7, true};
+    binary_pin eyes{6, true};
+    mcp3008 adc{false, 0, 3.3};
+    mutable binary_pin dust{5};
+    bme280 humidity{22, 0x76};
 };
-
-} // namespace core
 
 #endif

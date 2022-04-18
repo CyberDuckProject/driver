@@ -3,8 +3,6 @@
 #include <bme280_defs.h>
 #include <pigpio.h>
 
-namespace dev {
-
 class bme280_category : public std::error_category
 {
 public:
@@ -356,5 +354,3 @@ std::error_code make_pigpio_error(i32 ec)
     static pigpio_category category;
     return std::error_code{ec, category};
 }
-
-} // namespace dev

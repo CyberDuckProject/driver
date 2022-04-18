@@ -4,8 +4,6 @@
 #include "utl/fundamental_types.h"
 #include <bme280_defs.h>
 
-namespace dev {
-
 class bme280
 {
 public:
@@ -21,7 +19,5 @@ private:
     i32 handle;
     mutable bme280_dev device;
 };
-
-} // namespace dev
 
 #endif

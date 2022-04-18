@@ -3,8 +3,6 @@
 #include <cassert>
 #include <pigpio.h>
 
-namespace dev {
-
 mcp3008::mcp3008(bool aux, u32 channel, f64 vref) : vref{vref}
 {
     handle = spiOpen(channel, 1000000, PI_SPI_FLAGS_AUX_SPI(aux));
@@ -36,5 +34,3 @@ f64 mcp3008::read_voltage(u32 channel) const
     // Calculate input voltage
     return static_cast<f64>(code) * vref / 1023.0;
 }
-
-} // namespace dev

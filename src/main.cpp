@@ -4,7 +4,7 @@
 void guarded_main()
 {
     BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
-    core::io_driver drv;
+    io_driver drv;
 }
 
 i32 main()

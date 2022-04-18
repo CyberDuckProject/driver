@@ -3,8 +3,6 @@
 
 #include "utl/fundamental_types.h"
 
-namespace dev {
-
 class mcp3008
 {
 public:
@@ -17,7 +15,5 @@ private:
     f64 vref;
     i32 handle;
 };
-
-} // namespace dev
 
 #endif

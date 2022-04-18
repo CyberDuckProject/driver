@@ -3,8 +3,6 @@
 
 #include "utl/fundamental_types.h"
 
-namespace dev {
-
 class esc
 {
 public:
@@ -17,7 +15,5 @@ public:
 private:
     u32 broadcom;
 };
-
-} // namespace dev
 
 #endif

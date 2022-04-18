@@ -3,8 +3,6 @@
 #include <cassert>
 #include <pigpio.h>
 
-namespace dev {
-
 esc::esc(u32 broadcom, f64 speed) : broadcom{broadcom}
 {
     set_speed(speed);
@@ -27,5 +25,3 @@ void esc::set_speed(f64 speed)
     u32 us = 1000 + static_cast<u32>(speed * 1000);
     gpioServo(broadcom, us);
 }
-
-} // namespace dev

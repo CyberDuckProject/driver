@@ -5,8 +5,6 @@
 #include <pigpio.h>
 #include <unistd.h>
 
-namespace dev {
-
 bme280::bme280(u32 bus, u32 address)
 {
     // Open I2C bus
@@ -64,5 +62,3 @@ i8 bme280::write(u8 reg_addr, const u8* reg_data, u32 len)
 {
     return i2cWriteI2CBlockData(handle, reg_addr, (char*)reg_data, len) == 0 ? 0 : -1;
 }
-
-} // namespace dev
