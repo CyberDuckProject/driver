@@ -9,8 +9,8 @@ add_executable(driver
     dev/esc.cpp
     dev/binary_pin.h
     dev/binary_pin.cpp
-    dev/error_codes.h
-    dev/error_codes.cpp
+    dev/detail/error_codes.h
+    dev/detail/error_codes.cpp
     core/io_driver.h
     core/io_driver.cpp
 )
