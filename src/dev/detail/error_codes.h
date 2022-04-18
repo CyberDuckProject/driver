@@ -1,5 +1,5 @@
-#ifndef DEV_ERROR_CODES_H
-#define DEV_ERROR_CODES_H
+#ifndef DEV_DETAIL_ERROR_CODES_H
+#define DEV_DETAIL_ERROR_CODES_H
 
 #include "utl/fundamental_types.h"
 #include <system_error>
