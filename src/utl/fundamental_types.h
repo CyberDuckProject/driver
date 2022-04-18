@@ -1,5 +1,5 @@
-#ifndef FUNDAMENTAL_TYPES_H
-#define FUNDAMENTAL_TYPES_H
+#ifndef UTL_FUNDAMENTAL_TYPES_H
+#define UTL_FUNDAMENTAL_TYPES_H
 
 #include <cstdint>
 
