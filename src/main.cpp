@@ -1,10 +1,16 @@
+#include "core/execution_context.h"
 #include "core/io_driver.h"
 #include <boost/log/trivial.hpp>
 
 void guarded_main()
 {
     BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
-    io_driver drv;
+    // io_driver drv;
+
+    BOOST_LOG_TRIVIAL(info) << "starting execution context";
+    execution_context ctx;
+
+    ctx.run();
 }
 
 i32 main()
