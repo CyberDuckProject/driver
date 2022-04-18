@@ -1,6 +1,5 @@
-#include "core/execution_context.h"
 #include "core/io_driver.h"
-#include "net/signal_handler.h"
+#include "utl/asio.h"
 #include <boost/log/trivial.hpp>
 
 void guarded_main()
@@ -11,10 +10,7 @@ void guarded_main()
     BOOST_LOG_TRIVIAL(info) << "starting execution context";
     execution_context ctx;
 
-    BOOST_LOG_TRIVIAL(info) << "registering signal handler";
-    signal_handler sig_handler{ctx};
-
-    ctx.run();
+    ctx.join();
 }
 
 i32 main()

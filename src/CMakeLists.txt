@@ -14,10 +14,6 @@ add_executable(driver
     dev/detail/static_init.cpp
     core/io_driver.h
     core/io_driver.cpp
-    core/execution_context.h
-    core/execution_context.cpp
-    net/signal_handler.h
-    net/signal_handler.cpp
 )
 
 # Include directory
