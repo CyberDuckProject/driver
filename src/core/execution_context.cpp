@@ -16,3 +16,8 @@ void execution_context::run()
 {
     ctx.join();
 }
+
+void execution_context::stop()
+{
+    ctx.stop();
+}

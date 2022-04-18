@@ -13,6 +13,7 @@ public:
     strand_type make_strand();
 
     void run();
+    void stop();
 
 private:
     boost::asio::thread_pool ctx{4};
