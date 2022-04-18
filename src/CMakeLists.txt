@@ -1,6 +1,7 @@
 add_executable(driver
     main.cpp
-    utl/fundamental_types.h
+    core/io_driver.h
+    core/io_driver.cpp
     dev/bme280.h
     dev/bme280.cpp
     dev/mcp3008.h
@@ -12,8 +13,8 @@ add_executable(driver
     dev/detail/error_codes.h
     dev/detail/error_codes.cpp
     dev/detail/static_init.cpp
-    core/io_driver.h
-    core/io_driver.cpp
+    utl/asio.h
+    utl/fundamental_types.h
 )
 
 # Include directory
