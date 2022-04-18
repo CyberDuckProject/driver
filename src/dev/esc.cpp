@@ -1,5 +1,6 @@
 #include "esc.h"
 
+#include "detail/error_codes.h"
 #include <cassert>
 #include <pigpio.h>
 
@@ -15,7 +16,8 @@ esc::~esc()
 
 f64 esc::speed() const
 {
-    i32 us = gpioGetServoPulsewidth(broadcom);
+    i32 us;
+    pigpio_verify(us = gpioGetServoPulsewidth(broadcom));
     return static_cast<f64>(us - 1000) / 1000.0;
 }
 
@@ -23,5 +25,5 @@ void esc::set_speed(f64 speed)
 {
     assert(speed >= 0.0 && speed <= 1.0);
     u32 us = 1000 + static_cast<u32>(speed * 1000);
-    gpioServo(broadcom, us);
+    pigpio_verify(gpioServo(broadcom, us));
 }

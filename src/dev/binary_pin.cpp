@@ -1,10 +1,11 @@
 #include "binary_pin.h"
 
+#include "detail/error_codes.h"
 #include <pigpio.h>
 
 binary_pin::binary_pin(u32 broadcom, bool on) : broadcom{broadcom}
 {
-    gpioSetMode(broadcom, PI_OUTPUT);
+    pigpio_verify(gpioSetMode(broadcom, PI_OUTPUT));
     set_state(on);
 }
 
@@ -21,5 +22,5 @@ bool binary_pin::state() const
 void binary_pin::set_state(bool on)
 {
     value = on;
-    gpioWrite(broadcom, on);
+    pigpio_verify(gpioWrite(broadcom, on));
 }

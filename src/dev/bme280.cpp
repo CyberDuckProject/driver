@@ -1,5 +1,6 @@
 #include "bme280.h"
 
+#include "detail/error_codes.h"
 #include <bme280.h>
 #include <cassert>
 #include <pigpio.h>
@@ -8,7 +9,7 @@
 bme280::bme280(u32 bus, u32 address)
 {
     // Open I2C bus
-    handle = i2cOpen(bus, address, 0);
+    pigpio_verify(handle = i2cOpen(bus, address, 0));
 
     // Setup BME280 interface and callbacks
     device.intf = BME280_I2C_INTF;
@@ -24,7 +25,7 @@ bme280::bme280(u32 bus, u32 address)
     };
 
     // Initialize the device
-    bme280_init(&device);
+    bme280_verify(bme280_init(&device));
 
     // Set sensor settings
     device.settings.osr_h = BME280_OVERSAMPLING_1X;
@@ -32,10 +33,10 @@ bme280::bme280(u32 bus, u32 address)
     device.settings.osr_t = BME280_OVERSAMPLING_2X;
     device.settings.filter = BME280_FILTER_COEFF_16;
     device.settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
-    bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &device);
+    bme280_verify(bme280_set_sensor_settings(BME280_ALL_SETTINGS_SEL, &device));
 
     // Set sensor mode
-    bme280_set_sensor_mode(BME280_NORMAL_MODE, &device);
+    bme280_verify(bme280_set_sensor_mode(BME280_NORMAL_MODE, &device));
 }
 
 bme280::~bme280()
@@ -49,7 +50,7 @@ bme280::~bme280()
 bme280_data bme280::get_sensor_data() const
 {
     bme280_data data;
-    bme280_get_sensor_data(BME280_ALL, &data, &device);
+    bme280_verify(bme280_get_sensor_data(BME280_ALL, &data, &device));
     return data;
 }
 
