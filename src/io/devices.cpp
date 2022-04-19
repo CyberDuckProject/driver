@@ -14,6 +14,32 @@
             throw ::std::system_error{ec};                                                         \
     while (false)
 
+namespace {
+
+class static_init
+{
+public:
+    static_init()
+    {
+        // Disable printing
+        u32 internals = gpioCfgGetInternals() | PI_CFG_NOSIGHANDLER;
+        gpioCfgSetInternals(internals);
+
+        // Disable unused features
+        gpioCfgInterfaces(PI_DISABLE_FIFO_IF | PI_DISABLE_SOCK_IF | PI_DISABLE_ALERT);
+
+        // Initialize pigpio
+        gpioInitialise();
+    }
+
+    ~static_init()
+    {
+        gpioTerminate();
+    }
+} static_init;
+
+} // namespace
+
 esc::esc(u32 broadcom, f64 speed) : broadcom{broadcom}
 {
     set_speed(speed);
