@@ -1,14 +1,16 @@
-#include "core/io_driver.h"
-#include "utl/asio.h"
+#include "io/io_driver.h"
+#include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
+
+namespace asio = boost::asio;
 
 void guarded_main()
 {
     BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
     // io_driver drv;
 
-    BOOST_LOG_TRIVIAL(info) << "starting execution context";
-    execution_context ctx;
+    BOOST_LOG_TRIVIAL(info) << "starting 4 threads";
+    asio::thread_pool ctx{4};
 
     ctx.join();
 }

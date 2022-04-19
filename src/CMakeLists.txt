@@ -1,20 +1,12 @@
 add_executable(driver
-    main.cpp
-    core/io_driver.h
-    core/io_driver.cpp
-    dev/bme280.h
-    dev/bme280.cpp
-    dev/mcp3008.h
-    dev/mcp3008.cpp
-    dev/esc.h
-    dev/esc.cpp
-    dev/binary_pin.h
-    dev/binary_pin.cpp
-    dev/detail/error_codes.h
-    dev/detail/error_codes.cpp
-    dev/detail/static_init.cpp
-    utl/asio.h
+    io/devices.cpp
+    io/devices.h
+    io/error_codes.cpp
+    io/error_codes.h
+    io/io_driver.cpp
+    io/io_driver.h
     utl/fundamental_types.h
+    main.cpp
 )
 
 # Include directory

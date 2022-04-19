@@ -1,17 +1,14 @@
-#ifndef CORE_IO_DRIVER_H
-#define CORE_IO_DRIVER_H
+#ifndef IO_IO_DRIVER_H
+#define IO_IO_DRIVER_H
 
-#include "dev/binary_pin.h"
-#include "dev/bme280.h"
-#include "dev/esc.h"
-#include "dev/mcp3008.h"
+#include "devices.h"
 
 class io_driver
 {
 public:
     f64 temperature() const;
     f64 turbidity() const;
-    f64 dust(u32 iterations = 10) const;
+    f64 dust() const;
     f64 battery_voltage() const;
 
     bme280_data weather() const;
