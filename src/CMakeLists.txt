@@ -5,6 +5,7 @@ add_executable(driver
     io/error_codes.h
     io/io_driver.cpp
     io/io_driver.h
+    io/static_init.cpp
     utl/fundamental_types.h
     main.cpp
 )
