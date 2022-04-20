@@ -6,6 +6,7 @@ add_executable(driver
     io/io_driver.cpp
     io/io_driver.h
     io/static_init.cpp
+    net/messages.h
     net/signal_handler.h
     utl/fundamental_types.h
     main.cpp
