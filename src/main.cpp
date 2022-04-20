@@ -1,6 +1,5 @@
 #include "io/io_driver.h"
-#include <boost/asio.hpp>
-#include <boost/log/trivial.hpp>
+#include "net/signal_handler.h"
 
 namespace asio = boost::asio;
 
@@ -11,6 +10,9 @@ void guarded_main()
 
     BOOST_LOG_TRIVIAL(info) << "starting 4 threads";
     asio::thread_pool ctx{4};
+
+    BOOST_LOG_TRIVIAL(info) << "registering signal handler";
+    signal_handler sig_handler{ctx};
 
     ctx.join();
 }
