@@ -3,7 +3,7 @@
 
 #include "utl/fundamental_types.h"
 
-enum class message_type : u8
+enum class message_type : u64
 {
     control = 1,
     status = 2
