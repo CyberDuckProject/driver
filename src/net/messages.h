@@ -11,6 +11,11 @@ enum class message_type : u8
     status = 2
 };
 
+enum class message_error : i32
+{
+    invalid_format = 1
+};
+
 struct control_message
 {
     f64 left;
@@ -31,11 +36,6 @@ struct status_message
 struct message_buffer
 {
 public:
-    enum
-    {
-        invalid_format = 1
-    };
-
     bool empty() const;
     message_type type() const;
 
