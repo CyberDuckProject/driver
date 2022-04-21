@@ -19,8 +19,7 @@ public:
 private:
     void accept()
     {
-        acceptor.async_accept(
-            [this](const boost::system::error_code& ec, boost::asio::ip::tcp::socket s) {
+        acceptor.async_accept([this](boost::system::error_code ec, boost::asio::ip::tcp::socket s) {
             if (!ec)
             {
                 BOOST_LOG_TRIVIAL(debug) << "connected to " << s.remote_endpoint();
