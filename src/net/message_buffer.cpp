@@ -1,5 +1,7 @@
 #include "message_buffer.h"
 
+namespace net {
+
 bool message_buffer::empty() const
 {
     return std::holds_alternative<std::monostate>(value);
@@ -24,3 +26,5 @@ message_type message_buffer::type() const
         return message_type::status;
     }
 }
+
+} // namespace net

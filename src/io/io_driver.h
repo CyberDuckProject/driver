@@ -3,6 +3,8 @@
 
 #include "devices.h"
 
+namespace io {
+
 class io_driver
 {
 public:
@@ -23,5 +25,7 @@ private:
     mutable binary_pin dust_ir{5};
     bme280 humidity{22, 0x76};
 };
+
+} // namespace io
 
 #endif

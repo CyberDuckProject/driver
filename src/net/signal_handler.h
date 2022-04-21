@@ -4,6 +4,8 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
+namespace net {
+
 template<typename ExecutionContext>
 class signal_handler
 {
@@ -26,5 +28,7 @@ public:
 private:
     boost::asio::signal_set signal_set;
 };
+
+} // namespace net
 
 #endif

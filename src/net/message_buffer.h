@@ -5,6 +5,8 @@
 #include <cassert>
 #include <variant>
 
+namespace net {
+
 enum class message_type : u64
 {
     control = 1,
@@ -35,5 +37,7 @@ public:
 private:
     std::variant<std::monostate, control_message, status_message> value{std::monostate{}};
 };
+
+} // namespace net
 
 #endif

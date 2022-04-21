@@ -3,6 +3,8 @@
 
 #include "utl/fundamental_types.h"
 
+namespace net {
+
 struct control_message
 {
     f64 left;
@@ -19,5 +21,7 @@ struct status_message
     f64 temperature;
     f64 humidity;
 };
+
+} // namespace net
 
 #endif

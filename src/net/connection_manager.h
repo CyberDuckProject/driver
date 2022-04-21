@@ -5,6 +5,8 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
+namespace net {
+
 template<typename ExecutionContext>
 class connection_manager
 {
@@ -42,5 +44,7 @@ private:
     boost::asio::strand<typename ExecutionContext::executor_type> strand;
     message_buffer buffer;
 };
+
+} // namespace net
 
 #endif

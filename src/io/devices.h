@@ -4,6 +4,8 @@
 #include "utl/fundamental_types.h"
 #include <bme280_defs.h>
 
+namespace io {
+
 class esc
 {
 public:
@@ -64,5 +66,7 @@ private:
     u32 broadcom;
     bool value;
 };
+
+} // namespace io
 
 #endif

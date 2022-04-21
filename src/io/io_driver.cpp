@@ -2,6 +2,8 @@
 
 #include <boost/log/trivial.hpp>
 
+namespace io {
+
 f64 io_driver::temperature() const
 {
     return (adc.read_voltage(0) - 0.5) * 100.0;
@@ -48,3 +50,5 @@ bme280_data io_driver::weather() const
 {
     return humidity.get_sensor_data();
 }
+
+} // namespace io

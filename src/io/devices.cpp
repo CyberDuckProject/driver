@@ -14,6 +14,8 @@
             throw ::std::system_error{ec};                                                         \
     while (false)
 
+namespace io {
+
 esc::esc(u32 broadcom, f64 speed) : broadcom{broadcom}
 {
     set_speed(speed);
@@ -146,3 +148,5 @@ void binary_pin::set_state(bool on)
     value = on;
     PIGPIO_VERIFY(gpioWrite(broadcom, on));
 }
+
+} // namespace io
