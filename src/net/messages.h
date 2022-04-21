@@ -3,12 +3,6 @@
 
 #include "utl/fundamental_types.h"
 
-enum class message_type : u64
-{
-    control = 1,
-    status = 2
-};
-
 struct control_message
 {
     f64 left;

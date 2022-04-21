@@ -14,6 +14,7 @@ message_type message_buffer::type() const
 {
     assert(!empty());
 
+    // TODO: figure out a better way of doing this
     if (std::holds_alternative<control_message>(value))
     {
         return message_type::control;
