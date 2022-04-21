@@ -2,7 +2,7 @@
 #define NET_MESSAGES_H
 
 #include "utl/fundamental_types.h"
-#include <boost/asio.hpp>
+#include <cassert>
 #include <variant>
 
 enum class message_type : u8
@@ -31,40 +31,33 @@ struct status_message
 struct message_buffer
 {
 public:
+    enum
+    {
+        invalid_format = 1
+    };
+
+    bool empty() const;
     message_type type() const;
 
-    template<typename AsyncReadStream, typename ReadHandler>
-    void async_read(AsyncReadStream& stream, ReadHandler&& handler)
+    template<message_type Type>
+    auto& get()
     {
-        namespace asio = boost::asio;
-        namespace bs = boost::system;
+        assert(!empty());
+        assert(type() == Type);
 
-        auto async_read = [&stream](asio::mutable_buffer buffer, auto&& handler) {
-            asio::async_read(stream, buffer, std::forward<decltype(handler)>(handler));
-        };
-
-        // Read the messag header
-        async_read(header(), [this, &handler](const bs::error_code& ec, std::size_t n) {
-            if (!ec)
-            {
-                // Read the message body
-                async_read(body(), [this, &handler](const bs::error_code& ec, std::size_t n) {
-                    handler(ec, n + sizeof(header));
-                })
-            }
-            else
-            {
-                handler(ec, n);
-            }
-        });
+        if constexpr (Type == message_type::control)
+        {
+            return std::get<control_message>(body);
+        }
+        else if constexpr (Type == message_type::status)
+        {
+            return std::get<status_message>(body);
+        }
     }
 
 private:
-    boost::asio::mutable_buffer header();
-    boost::asio::mutable_buffer body();
-
-    message_type type;
-    std::variant<control_message, status_message> value;
+    message_type header;
+    std::variant<std::monostate, control_message, status_message> body{std::monostate{}};
 };
 
 #endif
