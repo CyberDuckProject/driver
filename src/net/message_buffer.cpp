@@ -2,16 +2,24 @@
 
 bool message_buffer::empty() const
 {
-    return std::holds_alternative<std::monostate>(body);
+    return std::holds_alternative<std::monostate>(value);
 }
 
 void message_buffer::clear()
 {
-    body = std::monostate{};
+    value = std::monostate{};
 }
 
 message_type message_buffer::type() const
 {
     assert(!empty());
-    return header;
+
+    if (std::holds_alternative<control_message>(value))
+    {
+        return message_type::control;
+    }
+    else if (std::holds_alternative<status_message>(value))
+    {
+        return message_type::status;
+    }
 }

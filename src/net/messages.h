@@ -26,19 +26,4 @@ struct status_message
     f64 humidity;
 };
 
-template<typename Message>
-constexpr message_type message_type_of();
-
-template<>
-constexpr message_type message_type_of<control_message>()
-{
-    return message_type::control;
-}
-
-template<>
-constexpr message_type message_type_of<status_message>()
-{
-    return message_type::status;
-}
-
 #endif

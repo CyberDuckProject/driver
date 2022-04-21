@@ -11,8 +11,7 @@ public:
     template<typename Message>
     message_buffer& operator=(Message msg)
     {
-        header = message_type_of<Message>();
-        body = std::move(msg);
+        value = std::move(msg);
         return *this;
     }
 
@@ -24,13 +23,11 @@ public:
     auto& get()
     {
         assert(!empty());
-        assert(type() == message_type_of<Message>());
-        return std::get<Message>(body);
+        return std::get<Message>(value);
     }
 
 private:
-    message_type header;
-    std::variant<std::monostate, control_message, status_message> body{std::monostate{}};
+    std::variant<std::monostate, control_message, status_message> value{std::monostate{}};
 };
 
 #endif
