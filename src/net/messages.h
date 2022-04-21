@@ -2,18 +2,12 @@
 #define NET_MESSAGES_H
 
 #include "utl/fundamental_types.h"
-#include <cassert>
-#include <variant>
+#include <boost/asio.hpp>
 
 enum class message_type : u8
 {
     control = 1,
     status = 2
-};
-
-enum class message_error : i32
-{
-    invalid_format = 1
 };
 
 struct control_message
@@ -33,31 +27,19 @@ struct status_message
     f64 humidity;
 };
 
-struct message_buffer
+template<typename Message>
+constexpr message_type message_type_of();
+
+template<>
+constexpr message_type message_type_of<control_message>()
 {
-public:
-    bool empty() const;
-    message_type type() const;
+    return message_type::control;
+}
 
-    template<message_type Type>
-    auto& get()
-    {
-        assert(!empty());
-        assert(type() == Type);
-
-        if constexpr (Type == message_type::control)
-        {
-            return std::get<control_message>(body);
-        }
-        else if constexpr (Type == message_type::status)
-        {
-            return std::get<status_message>(body);
-        }
-    }
-
-private:
-    message_type header;
-    std::variant<std::monostate, control_message, status_message> body{std::monostate{}};
-};
+template<>
+constexpr message_type message_type_of<status_message>()
+{
+    return message_type::status;
+}
 
 #endif

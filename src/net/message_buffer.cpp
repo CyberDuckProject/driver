@@ -1,4 +1,4 @@
-#include "messages.h"
+#include "message_buffer.h"
 
 bool message_buffer::empty() const
 {
