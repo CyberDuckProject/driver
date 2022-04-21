@@ -9,8 +9,11 @@ template<typename ExecutionContext>
 class connection_manager
 {
 public:
+    using executor_type = typename ExecutionContext::executor_type;
+
     connection_manager(ExecutionContext& ctx, u16 port) :
-        acceptor{ctx, {boost::asio::ip::tcp::v4(), port}}, socket{ctx}
+        acceptor{ctx, {boost::asio::ip::tcp::v4(), port}}, socket{ctx},
+        strand{boost::asio::make_strand(ctx)}
     {
         accept();
     }
@@ -39,6 +42,7 @@ private:
 
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
+    boost::asio::strand<executor_type> strand;
     message_buffer buffer;
 };
 
