@@ -17,6 +17,7 @@ public:
     }
 
     bool empty() const;
+    void clear();
     message_type type() const;
 
     template<typename Message>
