@@ -2,7 +2,6 @@
 #define NET_MESSAGES_H
 
 #include "utl/fundamental_types.h"
-#include <boost/asio.hpp>
 
 enum class message_type : u8
 {
