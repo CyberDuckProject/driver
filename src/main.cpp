@@ -1,4 +1,5 @@
 #include "io/io_driver.h"
+#include "net/connection_manager.h"
 #include "net/signal_handler.h"
 
 namespace asio = boost::asio;
@@ -13,6 +14,9 @@ void guarded_main()
 
     BOOST_LOG_TRIVIAL(info) << "registering signal handler";
     signal_handler sig_handler{ctx};
+
+    BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
+    connection_manager connection_mgr{ctx, 1333};
 
     ctx.join();
 }
