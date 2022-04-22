@@ -17,6 +17,13 @@ template<typename... Messages>
 class message_buffer
 {
 public:
+    message_buffer() = default;
+
+    template<typename Message>
+    explicit message_buffer(Message msg)
+    {
+    }
+
     template<typename Message>
     message_buffer& operator=(Message msg)
     {
@@ -30,12 +37,17 @@ public:
     {
     }
 
-    message_type type() const
+    const message_type& type() const
     {
     }
 
     template<typename Message>
     auto& get()
+    {
+    }
+
+    template<typename Message>
+    const auto& get() const
     {
     }
 
