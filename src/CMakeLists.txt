@@ -1,6 +1,5 @@
 add_executable(driver
     net/connection_manager.h
-    net/message_buffer.cpp
     net/message_buffer.h
     net/messages.h
     net/signal_handler.h

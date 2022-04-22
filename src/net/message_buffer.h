@@ -6,36 +6,42 @@
 #include <variant>
 
 namespace net {
+namespace detail {
 
-enum class message_type : u64
-{
-    control = 1,
-    status = 2
-};
+template<typename T, typename... Ts>
+constexpr bool contains = (std::is_same_v<T, Ts> || ...);
 
+} // namespace detail
+
+template<typename... Messages>
 struct message_buffer
 {
 public:
     template<typename Message>
     message_buffer& operator=(Message msg)
     {
-        value = std::move(msg);
-        return *this;
     }
 
-    bool empty() const;
-    void clear();
-    message_type type() const;
+    bool empty() const
+    {
+    }
+
+    void clear()
+    {
+    }
+
+    message_type type() const
+    {
+    }
 
     template<typename Message>
     auto& get()
     {
-        assert(!empty());
-        return std::get<Message>(value);
     }
 
 private:
-    std::variant<std::monostate, control_message, status_message> value{std::monostate{}};
+    message_type msg_type;
+    std::variant<std::monostate, Messages...> value{std::monostate{}};
 };
 
 } // namespace net

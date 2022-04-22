@@ -42,7 +42,7 @@ private:
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
     boost::asio::strand<typename ExecutionContext::executor_type> strand;
-    message_buffer buffer;
+    message_buffer<control_message> buffer;
 };
 
 } // namespace net
