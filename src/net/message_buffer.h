@@ -18,14 +18,10 @@ struct type_visitor
         return {};
     }
 
-    message_type operator()(const control_message&)
+    template<typename Message>
+    message_type operator()(const Message&)
     {
-        return message_type::control;
-    }
-
-    message_type operator()(const status_message&)
-    {
-        return message_type::status;
+        return message_type_of<Message>;
     }
 };
 
