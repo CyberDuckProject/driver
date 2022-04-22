@@ -14,7 +14,7 @@ constexpr bool contains = (std::is_same_v<T, Ts> || ...);
 } // namespace detail
 
 template<typename... Messages>
-struct message_buffer
+class message_buffer
 {
 public:
     template<typename Message>
