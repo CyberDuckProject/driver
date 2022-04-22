@@ -1,11 +1,4 @@
 add_executable(driver
-    io/devices.cpp
-    io/devices.h
-    io/error_codes.cpp
-    io/error_codes.h
-    io/io_driver.cpp
-    io/io_driver.h
-    io/static_init.cpp
     net/connection_manager.h
     net/message_buffer.cpp
     net/message_buffer.h

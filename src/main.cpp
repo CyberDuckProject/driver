@@ -1,4 +1,3 @@
-#include "io/io_driver.h"
 #include "net/connection_manager.h"
 #include "net/signal_handler.h"
 
@@ -6,9 +5,6 @@ namespace asio = boost::asio;
 
 void guarded_main()
 {
-    BOOST_LOG_TRIVIAL(info) << "initializing I/O driver";
-    io::io_driver drv;
-
     BOOST_LOG_TRIVIAL(info) << "starting 4 threads";
     asio::thread_pool ctx{4};
 
