@@ -68,7 +68,7 @@ private:
         boost::asio::async_read(stream, body.data(), std::move(self));
     }
 
-    op_state state = op_state::starting;
+    op_state state{op_state::starting};
     AsyncReadStream& stream;
     message_type header;
     message_buffer<Messages...>& body;
