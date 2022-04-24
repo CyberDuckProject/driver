@@ -2,14 +2,12 @@
 #define NET_MESSAGE_BUFFER_H
 
 #include "messages.h"
+#include <boost/asio.hpp>
 #include <cassert>
 #include <variant>
 
 namespace net {
 namespace detail {
-
-template<typename T, typename... Ts>
-constexpr bool contains = (std::is_same_v<T, Ts> || ...);
 
 struct type_visitor
 {
@@ -21,7 +19,21 @@ struct type_visitor
     template<typename Message>
     message_type operator()(const Message&)
     {
-        return message_type_of<Message>;
+        return message_type_of<Message>();
+    }
+};
+
+struct data_visitor
+{
+    boost::asio::mutable_buffer operator()(const std::monostate&)
+    {
+        return {};
+    }
+
+    template<typename Message>
+    boost::asio::mutable_buffer operator()(const Message& msg)
+    {
+        return boost::asio::buffer(std::addressof(msg), sizeof(msg));
     }
 };
 
@@ -31,30 +43,21 @@ template<typename... Messages>
 class message_buffer
 {
 public:
-    message_buffer() = default;
-
     template<typename Message>
-    explicit message_buffer(const Message& msg)
+    message_buffer& operator=(Message msg)
     {
-        *this = msg;
+        value = std::move(msg);
+        return *this;
     }
 
-    template<typename Message>
-    message_buffer& operator=(const Message& msg)
+    bool try_emplace(message_type t)
     {
-        static_assert(detail::contains<Message, Messages...>);
-        value = msg;
-        return *this;
+        return (try_emplace_type<Messages>(t) || ...);
     }
 
     bool empty() const
     {
         return std::holds_alternative<std::monostate>(value);
-    }
-
-    void clear()
-    {
-        value = std::monostate{};
     }
 
     message_type type() const
@@ -66,24 +69,28 @@ public:
     template<typename Message>
     Message& get()
     {
-        assert_get<Message>();
+        assert(!empty());
+        assert(type() == message_type_of<Message>);
         return std::get<Message>(value);
     }
 
-    template<typename Message>
-    const Message& get() const
+    boost::asio::mutable_buffer data()
     {
-        assert_get<Message>();
-        return std::get<Message>(value);
+        assert(!empty());
+        return std::visit(detail::data_visitor{}, value);
     }
 
 private:
     template<typename Message>
-    void assert_get() const
+    bool try_emplace_type(message_type t)
     {
-        static_assert(detail::contains<Message, Messages...>);
-        assert(!empty());
-        assert(std::holds_alternative<Message>(value));
+        if (t == message_type_of<Message>)
+        {
+            *this = Message{};
+            return true;
+        }
+
+        return false;
     }
 
     std::variant<std::monostate, Messages...> value{std::monostate{}};
