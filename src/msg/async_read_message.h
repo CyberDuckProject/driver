@@ -1,10 +1,11 @@
-#ifndef NET_ASYNC_READ_MESSAGE_H
-#define NET_ASYNC_READ_MESSAGE_H
+#ifndef MSG_ASYNC_READ_MESSAGE_H
+#define MSG_ASYNC_READ_MESSAGE_H
 
 #include "error.h"
 #include "message_buffer.h"
+#include <boost/asio.hpp>
 
-namespace net {
+namespace msg {
 namespace detail {
 
 template<typename AsyncReadStream, typename... Messages>
@@ -85,6 +86,6 @@ auto async_read_message(AsyncReadStream& stream, message_buffer<Messages...>& bu
         detail::async_read_message_op{stream, buffer}, token, stream);
 }
 
-} // namespace net
+} // namespace msg
 
 #endif

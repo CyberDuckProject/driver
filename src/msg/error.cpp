@@ -1,6 +1,6 @@
 #include "error.h"
 
-namespace net::error {
+namespace msg::error {
 
 class message_category : public boost::system::error_category
 {
@@ -28,4 +28,4 @@ boost::system::error_code make_error_code(message_errors ec)
     return boost::system::error_code{ec, instance};
 }
 
-} // namespace net::error
+} // namespace msg::error

@@ -1,7 +1,8 @@
 #ifndef NET_CONNECTION_MANAGER_H
 #define NET_CONNECTION_MANAGER_H
 
-#include "async_read_message.h"
+#include "msg/async_read_message.h"
+#include "msg/message_buffer.h"
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
@@ -37,13 +38,14 @@ private:
 
     void read()
     {
-        async_read_message(socket, buffer, [this](boost::system::error_code ec, std::size_t n) {
+        msg::async_read_message(socket, buffer,
+                                [this](boost::system::error_code ec, std::size_t n) {
             if (!ec)
             {
                 // TODO: handle message
                 read();
             }
-            else if (ec == error::invalid_format)
+            else if (ec == msg::error::invalid_format)
             {
                 BOOST_LOG_TRIVIAL(error) << "invalid message format";
                 read();
@@ -63,7 +65,7 @@ private:
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
     boost::asio::strand<typename ExecutionContext::executor_type> strand;
-    message_buffer<control_message> buffer;
+    msg::message_buffer<msg::control_message> buffer;
 };
 
 } // namespace net

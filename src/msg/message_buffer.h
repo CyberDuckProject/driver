@@ -1,12 +1,12 @@
-#ifndef NET_MESSAGE_BUFFER_H
-#define NET_MESSAGE_BUFFER_H
+#ifndef MSG_MESSAGE_BUFFER_H
+#define MSG_MESSAGE_BUFFER_H
 
 #include "message.h"
 #include <boost/asio.hpp>
 #include <cassert>
 #include <variant>
 
-namespace net {
+namespace msg {
 namespace detail {
 
 struct type_visitor
@@ -96,6 +96,6 @@ private:
     std::variant<std::monostate, Messages...> value{std::monostate{}};
 };
 
-} // namespace net
+} // namespace msg
 
 #endif

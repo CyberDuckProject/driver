@@ -1,9 +1,9 @@
-#ifndef NET_MESSAGE_H
-#define NET_MESSAGE_H
+#ifndef MSG_MESSAGE_H
+#define MSG_MESSAGE_H
 
 #include "utl/fundamental_types.h"
 
-namespace net {
+namespace msg {
 
 enum class message_type : u64
 {
@@ -37,6 +37,6 @@ constexpr message_type message_type_of<control_message> = message_type::control;
 template<>
 constexpr message_type message_type_of<status_message> = message_type::status;
 
-} // namespace net
+} // namespace msg
 
 #endif

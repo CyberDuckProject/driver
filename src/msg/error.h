@@ -1,10 +1,10 @@
-#ifndef NET_ERROR_H
-#define NET_ERROR_H
+#ifndef MSG_ERROR_H
+#define MSG_ERROR_H
 
 #include "utl/fundamental_types.h"
 #include <boost/system.hpp>
 
-namespace net::error {
+namespace msg::error {
 
 enum message_errors : i32
 {
@@ -13,12 +13,12 @@ enum message_errors : i32
 
 boost::system::error_code make_error_code(message_errors ec);
 
-} // namespace net::error
+} // namespace msg::error
 
 namespace boost::system {
 
 template<>
-struct is_error_code_enum<net::error::message_errors>
+struct is_error_code_enum<msg::error::message_errors>
 {
     static const bool value = true;
 };
