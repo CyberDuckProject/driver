@@ -11,7 +11,7 @@ enum class message_type : u64
     status = 2
 };
 
-struct control_message 
+struct control_message
 {
     f64 left;
     f64 right;
@@ -27,6 +27,15 @@ struct status_message
     f64 temperature;
     f64 humidity;
 };
+
+template<typename Message>
+constexpr message_type message_type_of;
+
+template<>
+constexpr message_type message_type_of<control_message> = message_type::control;
+
+template<>
+constexpr message_type message_type_of<status_message> = message_type::status;
 
 } // namespace net
 
