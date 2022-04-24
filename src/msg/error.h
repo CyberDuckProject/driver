@@ -6,19 +6,19 @@
 
 namespace msg::error {
 
-enum message_errors : i32
+enum read_errors : i32
 {
     invalid_format = 1
 };
 
-boost::system::error_code make_error_code(message_errors ec);
+boost::system::error_code make_error_code(read_errors ec);
 
 } // namespace msg::error
 
 namespace boost::system {
 
 template<>
-struct is_error_code_enum<msg::error::message_errors>
+struct is_error_code_enum<msg::error::read_errors>
 {
     static const bool value = true;
 };

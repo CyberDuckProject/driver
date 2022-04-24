@@ -2,12 +2,12 @@
 
 namespace msg::error {
 
-class message_category : public boost::system::error_category
+class read_category : public boost::system::error_category
 {
 public:
     const char* name() const noexcept override
     {
-        return "net.message";
+        return "msg.read";
     }
 
     std::string message(i32 ec) const override
@@ -17,14 +17,14 @@ public:
         case invalid_format:
             return "invalid format";
         default:
-            return "net.message error";
+            return "msg.read error";
         }
     }
 };
 
-boost::system::error_code make_error_code(message_errors ec)
+boost::system::error_code make_error_code(read_errors ec)
 {
-    static message_category instance;
+    static read_category instance;
     return boost::system::error_code{ec, instance};
 }
 
