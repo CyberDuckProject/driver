@@ -59,12 +59,12 @@ private:
             return;
         }
 
-        if (!body.try_emplace(header))
+        if (!body.try_construct(header))
         {
             self.complete(error::invalid_format, n);
             return;
         }
-        
+
         boost::asio::async_read(stream, body.data(), std::move(self));
     }
 

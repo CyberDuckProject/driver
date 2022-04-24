@@ -50,9 +50,9 @@ public:
         return *this;
     }
 
-    bool try_emplace(message_type t)
+    bool try_construct(message_type t)
     {
-        return (try_emplace_type<Messages>(t) || ...);
+        return (try_construct_type<Messages>(t) || ...);
     }
 
     bool empty() const
@@ -82,7 +82,7 @@ public:
 
 private:
     template<typename Message>
-    bool try_emplace_type(message_type t)
+    bool try_construct_type(message_type t)
     {
         if (t == message_type_of<Message>)
         {
