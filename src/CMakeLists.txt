@@ -1,4 +1,5 @@
 add_executable(driver
+    net/async_read_message.h
     net/connection_manager.h
     net/error.cpp
     net/error.h
