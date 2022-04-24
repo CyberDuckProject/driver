@@ -31,7 +31,7 @@ struct data_visitor
     }
 
     template<typename Message>
-    boost::asio::mutable_buffer operator()(const Message& msg)
+    boost::asio::mutable_buffer operator()(Message& msg)
     {
         return boost::asio::buffer(std::addressof(msg), sizeof(msg));
     }
