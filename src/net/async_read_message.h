@@ -53,21 +53,19 @@ private:
     template<typename Self>
     void read_body_or_complete(Self& self, boost::system::error_code ec, std::size_t n)
     {
-        if (!ec)
-        {
-            if (body.try_emplace(header))
-            {
-                boost::asio::async_read(stream, body.data(), std::move(self));
-            }
-            else
-            {
-                self.complete(error::invalid_format, n);
-            }
-        }
-        else
+        if (ec)
         {
             self.complete(ec, n);
+            return;
         }
+
+        if (!body.try_emplace(header))
+        {
+            self.complete(error::invalid_format, n);
+            return;
+        }
+        
+        boost::asio::async_read(stream, body.data(), std::move(self));
     }
 
     op_state state = op_state::starting;
