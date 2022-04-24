@@ -1,7 +1,7 @@
 #ifndef NET_MESSAGE_BUFFER_H
 #define NET_MESSAGE_BUFFER_H
 
-#include "messages.h"
+#include "message.h"
 #include <boost/asio.hpp>
 #include <cassert>
 #include <variant>

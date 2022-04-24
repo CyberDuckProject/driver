@@ -1,5 +1,5 @@
-#ifndef NET_MESSAGES_H
-#define NET_MESSAGES_H
+#ifndef NET_MESSAGE_H
+#define NET_MESSAGE_H
 
 #include "utl/fundamental_types.h"
 
