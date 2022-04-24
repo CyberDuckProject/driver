@@ -19,7 +19,7 @@ struct type_visitor
     template<typename Message>
     message_type operator()(const Message&)
     {
-        return message_type_of<Message>();
+        return message_type_of<Message>;
     }
 };
 
