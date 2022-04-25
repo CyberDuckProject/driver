@@ -8,13 +8,12 @@
 
 namespace net {
 
-template<typename ExecutionContext>
+template<typename Executor>
 class connection_manager
 {
 public:
-    connection_manager(ExecutionContext& ctx, u16 port) :
-        acceptor{ctx, {boost::asio::ip::tcp::v4(), port}}, socket{ctx},
-        strand{boost::asio::make_strand(ctx)}
+    connection_manager(Executor ex, u16 port) :
+        acceptor{ex, {boost::asio::ip::tcp::v4(), port}}, socket{ex}, strand{ex}
     {
         accept();
     }
@@ -38,8 +37,7 @@ private:
 
     void read()
     {
-        msg::async_read_message(socket, buffer,
-                                [this](boost::system::error_code ec, std::size_t n) {
+        msg::async_read_message(socket, buffer, [this](boost::system::error_code ec, std::size_t) {
             if (!ec)
             {
                 // TODO: handle message
@@ -64,7 +62,7 @@ private:
 
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
-    boost::asio::strand<typename ExecutionContext::executor_type> strand;
+    boost::asio::strand<Executor> strand;
     msg::message_buffer<msg::control_message> buffer;
 };
 

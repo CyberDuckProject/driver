@@ -1,5 +1,4 @@
 #include "net/connection_manager.h"
-#include "net/signal_handler.h"
 
 namespace asio = boost::asio;
 
@@ -23,7 +22,7 @@ void guarded_main()
     });
 
     BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
-    net::connection_manager connection_mgr{ctx, 1333};
+    net::connection_manager connection_mgr{ctx.get_executor(), 1333};
 
     ctx.join();
 }
