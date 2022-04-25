@@ -2,7 +2,7 @@
 #define MSG_ERROR_H
 
 #include "utl/fundamental_types.h"
-#include <boost/system.hpp>
+#include <boost/system/error_code.hpp>
 
 namespace msg::error {
 
