@@ -28,7 +28,7 @@ public:
             break;
         case op_state::reading_header:
             state = op_state::reading_body;
-            read_body_or_complete(self, ec, n);
+            read_body_or_complete(self, std::move(ec), n);
             break;
         case op_state::reading_body:
             self.complete(std::move(ec), sizeof(header) + n);
