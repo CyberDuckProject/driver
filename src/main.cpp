@@ -9,7 +9,18 @@ void guarded_main()
     asio::thread_pool ctx{4};
 
     BOOST_LOG_TRIVIAL(info) << "registering signal handler";
-    net::signal_handler sig_handler{ctx};
+    asio::signal_set signal_set{ctx, SIGINT, SIGTERM};
+    signal_set.async_wait([&ctx](boost::system::error_code ec, i32 sig) {
+        if (ec)
+        {
+            BOOST_LOG_TRIVIAL(debug) << "received signal " << sig;
+            ctx.stop();
+        }
+        else
+        {
+            throw boost::system::system_error{ec};
+        }
+    });
 
     BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
     net::connection_manager connection_mgr{ctx, 1333};
