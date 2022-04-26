@@ -1,4 +1,5 @@
 #include "net/connection_manager.h"
+#include "net/signal_handler.h"
 
 namespace asio = boost::asio;
 
@@ -8,21 +9,10 @@ void guarded_main()
     asio::thread_pool ctx{4};
 
     BOOST_LOG_TRIVIAL(info) << "registering signal handler";
-    asio::signal_set signal_set{ctx, SIGINT, SIGTERM};
-    signal_set.async_wait([&ctx](boost::system::error_code ec, i32 sig) {
-        if (ec)
-        {
-            BOOST_LOG_TRIVIAL(debug) << "received signal " << sig;
-            ctx.stop();
-        }
-        else
-        {
-            throw boost::system::system_error{ec};
-        }
-    });
+    net::signal_handler sig_handler{ctx.get_executor()};
 
     BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
-    net::connection_manager connection_mgr{ctx.get_executor(), 1333};
+    net::connection_manager conn_mgr{ctx.get_executor(), 1333};
 
     ctx.join();
 }

@@ -4,6 +4,7 @@ add_executable(driver
     msg/error.h
     msg/message_buffer.h
     msg/message.h
+    net/signal_handler.h
     net/connection_manager.h
     utl/fundamental_types.h
     main.cpp
