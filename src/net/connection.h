@@ -18,6 +18,18 @@ public:
     template<typename CompletionToken>
     auto async_accept(CompletionToken&& token)
     {
+        boost::asio::async_completion<CompletionToken, void(boost::system::error_code)> init{token};
+
+        acceptor.async_accept([this, handler = std::move(init.completion_handler)](
+                                  boost::system::error_code ec, boost::asio::ip::tcp::socket s) {
+            if (!ec)
+            {
+                socket = std::move(s);
+            }
+            handler(std::move(ec));
+        });
+
+        return init.result.get();
     }
 
     template<typename... Messages, typename CompletionToken>
