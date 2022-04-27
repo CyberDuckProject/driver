@@ -25,13 +25,24 @@ struct type_visitor
 
 struct data_visitor
 {
-    boost::asio::mutable_buffer operator()(const std::monostate&)
+    boost::asio::mutable_buffer operator()(std::monostate&)
+    {
+        return {};
+    }
+
+    boost::asio::const_buffer operator()(const std::monostate&)
     {
         return {};
     }
 
     template<typename Message>
     boost::asio::mutable_buffer operator()(Message& msg)
+    {
+        return boost::asio::buffer(std::addressof(msg), sizeof(msg));
+    }
+
+    template<typename Message>
+    boost::asio::const_buffer operator()(const Message& msg)
     {
         return boost::asio::buffer(std::addressof(msg), sizeof(msg));
     }
@@ -75,6 +86,12 @@ public:
     }
 
     boost::asio::mutable_buffer data()
+    {
+        assert(!empty());
+        return std::visit(detail::data_visitor{}, value);
+    }
+
+    boost::asio::const_buffer data() const
     {
         assert(!empty());
         return std::visit(detail::data_visitor{}, value);
