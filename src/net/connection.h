@@ -6,20 +6,13 @@
 
 namespace net {
 
-template<typename Executor>
+template<typename ExecutionContext>
 class connection
 {
 public:
-    using executor_type = Executor;
-
-    connection(const executor_type& ex, u16 port) :
-        ex{ex}, acceptor{ex, {boost::asio::ip::tcp::v4(), port}}, socket{ex}
+    connection(ExecutionContext& ctx, u16 port) :
+        acceptor{ctx, {boost::asio::ip::tcp::v4(), port}}, socket{ctx}
     {
-    }
-
-    executor_type get_executor()
-    {
-        return ex;
     }
 
     template<typename CompletionToken>
@@ -39,7 +32,6 @@ public:
     }
 
 private:
-    executor_type ex;
     boost::asio::ip::tcp::acceptor acceptor;
     boost::asio::ip::tcp::socket socket;
 };

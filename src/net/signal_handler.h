@@ -7,19 +7,17 @@
 
 namespace net {
 
-template<typename Executor>
+template<typename ExecutionContext>
 class signal_handler
 {
 public:
-    using executor_type = Executor;
-
-    explicit signal_handler(const executor_type& ex) : ex{ex}, signal_set{ex, SIGINT, SIGTERM}
+    explicit signal_handler(ExecutionContext& ctx) : signal_set{ctx, SIGINT, SIGTERM}
     {
-        signal_set.async_wait([ex](boost::system::error_code ec, i32 sig) {
+        signal_set.async_wait([&ctx](boost::system::error_code ec, i32 sig) {
             if (!ec)
             {
                 BOOST_LOG_TRIVIAL(debug) << "received signal " << sig;
-                ex.context().stop();
+                ctx.stop();
             }
             else
             {
@@ -28,13 +26,7 @@ public:
         });
     }
 
-    executor_type get_executor()
-    {
-        return ex;
-    }
-
 private:
-    executor_type ex;
     boost::asio::signal_set signal_set;
 };
 
