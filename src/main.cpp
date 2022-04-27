@@ -14,10 +14,6 @@ void guarded_main()
     BOOST_LOG_TRIVIAL(info) << "listening on port 1333";
     net::connection conn{ctx.get_executor(), 1333};
 
-    conn.async_accept([](boost::system::error_code ec) {
-        BOOST_LOG_TRIVIAL(debug) << "hello";
-    });
-
     ctx.join();
 }
 
