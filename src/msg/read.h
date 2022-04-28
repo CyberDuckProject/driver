@@ -1,5 +1,5 @@
-#ifndef MSG_ASYNC_READ_MESSAGE_H
-#define MSG_ASYNC_READ_MESSAGE_H
+#ifndef MSG_READ_H
+#define MSG_READ_H
 
 #include "error.h"
 #include "message_buffer.h"

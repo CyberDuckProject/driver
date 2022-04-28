@@ -1,5 +1,5 @@
-#ifndef MSG_ASYNC_WRITE_MESSAGE_H
-#define MSG_ASYNC_WRITE_MESSAGE_H
+#ifndef MSG_WRITE_H
+#define MSG_WRITE_H
 
 #include "message_buffer.h"
 #include <boost/asio.hpp>

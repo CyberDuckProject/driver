@@ -1,10 +1,10 @@
 add_executable(driver
-    msg/async_read_message.h
-    msg/async_write_message.h
     msg/error.cpp
     msg/error.h
     msg/message_buffer.h
     msg/message.h
+    msg/read.h
+    msg/write.h
     net/signal_handler.h
     net/connection.h
     utl/fundamental_types.h
