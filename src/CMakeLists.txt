@@ -1,5 +1,6 @@
 add_executable(driver
     msg/async_read_message.h
+    msg/async_write_message.h
     msg/error.cpp
     msg/error.h
     msg/message_buffer.h
