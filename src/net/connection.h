@@ -1,7 +1,8 @@
 #ifndef NET_CONNECTION_H
 #define NET_CONNECTION_H
 
-#include "msg/message_buffer.h"
+#include "msg/read.h"
+#include "msg/write.h"
 #include <boost/asio.hpp>
 
 namespace net {
@@ -35,12 +36,16 @@ public:
     template<typename... Messages, typename CompletionToken>
     auto async_read_message(msg::message_buffer<Messages...>& buffer, CompletionToken&& token)
     {
+        // TODO: add timeouts
+        return msg::async_read_message(socket, buffer, std::forward<CompletionToken>(token));
     }
 
     template<typename... Messages, typename CompletionToken>
     auto async_write_message(const msg::message_buffer<Messages...>& buffer,
                              CompletionToken&& token)
     {
+        // TODO: add timeouts
+        return msg::async_write_message(socket, buffer, std::forward<CompletionToken>(token));
     }
 
 private:
