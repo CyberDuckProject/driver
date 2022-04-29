@@ -3,6 +3,7 @@
 
 #include "error.h"
 #include "message_buffer.h"
+#include "utl/allocate_from_token.h"
 #include <boost/asio.hpp>
 
 namespace msg {
@@ -94,9 +95,7 @@ auto async_read_message(AsyncReadStream& stream, message_buffer<Messages...>& bu
     using signature = void(boost::system::error_code, std::size_t);
 
     // Allocate header buffer
-    boost::asio::async_completion<CompletionToken, signature> init{token};
-    auto allocator{boost::asio::get_associated_allocator(init.completion_handler)};
-    std::shared_ptr<message_type> header{std::allocate_shared<message_type>(allocator)};
+    std::shared_ptr<message_type> header{utl::allocate_from_token<message_type, signature>(token)};
 
     // Initiate composed operation
     detail::async_read_message_op impl{stream, std::move(header), buffer};

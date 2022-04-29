@@ -7,6 +7,7 @@ add_executable(driver
     msg/write.h
     net/signal_handler.h
     net/connection.h
+    utl/allocate_from_token.h
     utl/fundamental_types.h
     main.cpp
 )
