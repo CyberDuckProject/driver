@@ -2,6 +2,7 @@
 #define MSG_WRITE_H
 
 #include "message_buffer.h"
+#include "utl/allocate_from_token.h"
 #include <boost/asio.hpp>
 
 namespace msg {
@@ -11,8 +12,10 @@ template<typename AsyncWriteStream, typename... Messages>
 class async_write_message_op
 {
 public:
-    async_write_message_op(AsyncWriteStream& stream, const message_buffer<Messages...>& buffer) :
-        stream{stream}, header{buffer.type()}, body{buffer}
+    async_write_message_op(AsyncWriteStream& stream, std::shared_ptr<message_type> header,
+                           const message_buffer<Messages...>& body) :
+        stream{stream},
+        header{std::move(header)}, body{body}
     {
     }
 
@@ -21,22 +24,22 @@ public:
     {
         switch (state)
         {
-        case op_state::starting:
-            state = op_state::writing_header;
+        case starting:
+            state = writing_header;
             write_header(self);
             break;
-        case op_state::writing_header:
-            state = op_state::writing_body;
-            write_body_or_complete(self, std::move(ec), n);
+        case writing_header:
+            state = writing_body;
+            write_body(self, ec, n);
             break;
-        case op_state::writing_body:
-            self.complete(std::move(ec), sizeof(header) + n);
+        case writing_body:
+            complete(self, ec, sizeof(message_type) + n);
             break;
         }
     }
 
 private:
-    enum class op_state
+    enum op_state
     {
         starting,
         writing_header,
@@ -46,25 +49,33 @@ private:
     template<typename Self>
     void write_header(Self& self)
     {
-        boost::asio::async_write(stream, boost::asio::buffer(&header, sizeof(header)),
+        assert(header);
+        boost::asio::async_write(stream, boost::asio::buffer(header.get(), sizeof(message_type)),
                                  std::move(self));
     }
 
     template<typename Self>
-    void write_body_or_complete(Self& self, boost::system::error_code ec, std::size_t n)
+    void write_body(Self& self, boost::system::error_code ec, std::size_t n)
     {
         if (ec)
         {
-            self.complete(std::move(ec), n);
+            complete(ec, n);
             return;
         }
 
         boost::asio::async_write(stream, body.data(), std::move(self));
     }
 
-    op_state state{op_state::starting};
+    template<typename Self>
+    void complete(Self& self, boost::system::error_code ec, std::size_t n)
+    {
+        header.reset();
+        self.complete(ec, n);
+    }
+
+    op_state state{starting};
     AsyncWriteStream& stream;
-    message_type header;
+    std::shared_ptr<message_type> header;
     const message_buffer<Messages...>& body;
 };
 
@@ -74,9 +85,18 @@ template<typename AsyncWriteStream, typename... Messages, typename CompletionTok
 auto async_write_message(AsyncWriteStream& stream, const message_buffer<Messages...>& buffer,
                          CompletionToken&& token)
 {
-    return boost::asio::async_compose<CompletionToken,
-                                      void(boost::system::error_code, std::size_t)>(
-        detail::async_write_message_op{stream, buffer}, token, stream);
+    using signature = void(boost::system::error_code, std::size_t);
+
+    // Allocate header buffer
+    std::shared_ptr<message_type> header{utl::allocate_from_token<message_type, signature>(token)};
+
+    // Fill header with message type
+    assert(!buffer.empty());
+    *header = buffer.type();
+
+    // Initiate composed operation
+    detail::async_write_message_op impl{stream, std::move(header), buffer};
+    return boost::asio::async_compose<CompletionToken, signature>(std::move(impl), token);
 }
 
 } // namespace msg
