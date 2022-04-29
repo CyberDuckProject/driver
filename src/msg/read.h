@@ -34,7 +34,7 @@ public:
             read_body(self, ec, n);
             break;
         case reading_body:
-            complete(self, ec, sizeof(header) + n);
+            complete(self, ec, sizeof(message_type) + n);
             break;
         }
     }
