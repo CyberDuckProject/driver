@@ -9,8 +9,9 @@
 namespace msg {
 namespace detail {
 
-struct type_visitor
+class type_visitor
 {
+public:
     message_type operator()(const std::monostate&)
     {
         return {};
@@ -23,8 +24,9 @@ struct type_visitor
     }
 };
 
-struct data_visitor
+class data_visitor
 {
+public:
     boost::asio::mutable_buffer operator()(std::monostate&)
     {
         return {};

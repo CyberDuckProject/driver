@@ -9,7 +9,7 @@ namespace msg {
 namespace detail {
 
 template<typename AsyncReadStream, typename... Messages>
-struct async_read_message_op
+class async_read_message_op
 {
 public:
     async_read_message_op(AsyncReadStream& stream, std::shared_ptr<message_type> header,
