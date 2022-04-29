@@ -9,35 +9,37 @@ namespace msg {
 namespace detail {
 
 template<typename AsyncReadStream, typename... Messages>
-class async_read_message_op
+struct async_read_message_op
 {
 public:
-    async_read_message_op(AsyncReadStream& stream, message_buffer<Messages...>& body) :
-        stream{stream}, body{body}
+    async_read_message_op(AsyncReadStream& stream, std::shared_ptr<message_type> header,
+                          message_buffer<Messages...>& body) :
+        stream{stream},
+        header{std::move(header)}, body{body}
     {
     }
 
     template<typename Self>
-    void operator()(Self& self, boost::system::error_code ec = {}, std::size_t n = {})
+    void operator()(Self& self, boost::system::error_code ec = {}, std::size_t n = 0)
     {
         switch (state)
         {
-        case op_state::starting:
-            state = op_state::reading_header;
+        case starting:
+            state = reading_header;
             read_header(self);
             break;
-        case op_state::reading_header:
-            state = op_state::reading_body;
-            read_body_or_complete(self, std::move(ec), n);
+        case reading_header:
+            state = reading_body;
+            read_body(self, ec, n);
             break;
-        case op_state::reading_body:
-            self.complete(std::move(ec), sizeof(header) + n);
+        case reading_body:
+            complete(self, ec, sizeof(header) + n);
             break;
         }
     }
 
 private:
-    enum class op_state
+    enum op_state
     {
         starting,
         reading_header,
@@ -47,31 +49,39 @@ private:
     template<typename Self>
     void read_header(Self& self)
     {
-        boost::asio::async_read(stream, boost::asio::buffer(&header, sizeof(header)),
+        assert(header);
+        boost::asio::async_read(stream, boost::asio::buffer(header.get(), sizeof(message_type)),
                                 std::move(self));
     }
 
     template<typename Self>
-    void read_body_or_complete(Self& self, boost::system::error_code ec, std::size_t n)
+    void read_body(Self& self, boost::system::error_code ec, std::size_t n)
     {
         if (ec)
         {
-            self.complete(ec, n);
+            complete(self, ec, n);
             return;
         }
 
-        if (!body.try_construct(header))
+        if (!body.try_construct(*header))
         {
-            self.complete(error::invalid_format, n);
+            complete(self, error::invalid_format, n);
             return;
         }
 
         boost::asio::async_read(stream, body.data(), std::move(self));
     }
 
-    op_state state{op_state::starting};
+    template<typename Self>
+    void complete(Self& self, boost::system::error_code ec, std::size_t n)
+    {
+        header.reset();
+        self.complete(ec, n);
+    }
+
+    op_state state{starting};
     AsyncReadStream& stream;
-    message_type header;
+    std::shared_ptr<message_type> header;
     message_buffer<Messages...>& body;
 };
 
@@ -81,9 +91,16 @@ template<typename AsyncReadStream, typename... Messages, typename CompletionToke
 auto async_read_message(AsyncReadStream& stream, message_buffer<Messages...>& buffer,
                         CompletionToken&& token)
 {
-    return boost::asio::async_compose<CompletionToken,
-                                      void(boost::system::error_code, std::size_t)>(
-        detail::async_read_message_op{stream, buffer}, token, stream);
+    using signature = void(boost::system::error_code, std::size_t);
+
+    // Allocate header buffer
+    boost::asio::async_completion<CompletionToken, signature> init{token};
+    auto allocator{boost::asio::get_associated_allocator(init.completion_handler)};
+    std::shared_ptr<message_type> header{std::allocate_shared<message_type>(allocator)};
+
+    // Initiate composed operation
+    detail::async_read_message_op impl{stream, std::move(header), buffer};
+    return boost::asio::async_compose<CompletionToken, signature>(std::move(impl), token);
 }
 
 } // namespace msg
